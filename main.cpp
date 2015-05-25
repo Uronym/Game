@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 		   return -2;
    }
 
-   al_clear_to_color(al_map_rgb(0,0,0));
+   al_clear_to_color(al_map_rgb(255,0,255));
  
    al_draw_bitmap(sprites[0],0.0,0.0,0);
 
