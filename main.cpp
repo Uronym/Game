@@ -26,8 +26,8 @@ int main(int argc, char **argv)
    }
 
    //load sprites
-   sprites = new ALLEGRO_BITMAP*[100];
-   for(int i = 0; i < 1; i++)
+   sprites = new ALLEGRO_BITMAP*[NUM_SPRITES];
+   for(int i = 0; i < NUM_SPRITES; i++)
    {
 	   string path = "Sprites/" + to_string((long long)i) + ".png";
 	   sprites[i] = al_load_bitmap(path.c_str());
