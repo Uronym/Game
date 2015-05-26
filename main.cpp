@@ -43,12 +43,18 @@ int main(int argc, char **argv)
    al_clear_to_color(al_map_rgb(255,0,255));
 
 	vector<Mon> mons;
+	// a test for drawing monsters!
 	mons.push_back(Mon(MON_SLIME, 3, 3));
 	mons.push_back(Mon(MON_SLIME, 4, 2));
 	mons.push_back(Mon(MON_SLIME, 5, 1));
 
 	for(unsigned i = 0; i < mons.size(); ++i) {
 		al_draw_bitmap(sprites[0], TILE * mons[i].x, TILE * mons[i].y, 0);
+	}
+
+	// showing off the other sprites
+	for(int i = 0; i < NUM_SPRITES; ++i) {
+		al_draw_bitmap(sprites[i], TILE * i, TILE * 7, 0);
 	}
 
    al_flip_display();
