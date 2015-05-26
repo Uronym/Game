@@ -2,9 +2,14 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <string>
+#include<vector>
 #include "Game.h"
+#include"mon.h"
+
 using namespace std;
- 
+
+const int TILE = 64; // size of tiles in pixels
+
 int main(int argc, char **argv)
 {
    ALLEGRO_DISPLAY *display = NULL;
@@ -36,8 +41,15 @@ int main(int argc, char **argv)
    }
 
    al_clear_to_color(al_map_rgb(255,0,255));
- 
-   al_draw_bitmap(sprites[0],0.0,0.0,0);
+
+	vector<Mon> mons;
+	mons.push_back(Mon(MON_SLIME, 3, 3));
+	mons.push_back(Mon(MON_SLIME, 4, 2));
+	mons.push_back(Mon(MON_SLIME, 5, 1));
+
+	for(unsigned i = 0; i < mons.size(); ++i) {
+		al_draw_bitmap(sprites[0], TILE * mons[i].x, TILE * mons[i].y, 0);
+	}
 
    al_flip_display();
  
