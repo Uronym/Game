@@ -14,6 +14,7 @@ const int TILE = 64; // size of tiles in pixels
 int main(int argc, char **argv) {
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+	ALLEGRO_KEYBOARD_STATE keyboard_state;
 
    if(!al_init()) {
       fprintf(stderr, "failed to initialize allegro!\n");
@@ -37,6 +38,12 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "failed to create event_queue!\n");
 		return -1;
 	}
+	
+	// install keyboard
+	if(!al_install_keyboard()) {
+		fprintf(stderr, "failed to install keyboard!\n");
+		return -1;
+	}
 
    //load sprites
    sprites = new ALLEGRO_BITMAP*[NUM_SPRITES];
@@ -49,10 +56,10 @@ int main(int argc, char **argv) {
    }
 
 	al_set_window_title(display, "Game");
-	al_clear_to_color(al_map_rgb(255,0,255));
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	
 	vector<Mon> mons;
+	double last_step = 0; // test variable for player movement
 	// create some monsters for render testing
 	mons.push_back(Mon(MON_SLIME, 3, 3));
 	mons.push_back(Mon(MON_SLIME, 4, 2));
@@ -65,7 +72,23 @@ int main(int argc, char **argv) {
 		al_init_timeout(&timeout, 0);
 		bool is_event = al_wait_for_event_until(event_queue, &event, &timeout);
 		if(is_event && event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
+		// keyboard input
+		al_get_keyboard_state(&keyboard_state);
+		// player movement
+		double now = al_get_time();
+		if(now - last_step > 0.25) {
+			if(al_key_down(&keyboard_state, ALLEGRO_KEY_UP)) {
+				last_step = now; --mons[0].y;
+			} if(al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)) {
+				last_step = now; ++mons[0].y;
+			} if(al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)) {
+				last_step = now; --mons[0].x;
+			} if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT)) {
+				last_step = now; ++mons[0].x;
+			}
+		}
 		// rendering
+		al_clear_to_color(al_map_rgb(63, 47, 31)); // a soft brown
 		// render monsters
 		for(unsigned i = 0; i < mons.size(); ++i) {
 			al_draw_bitmap(sprites[0], TILE * mons[i].x, TILE * mons[i].y, 0);
