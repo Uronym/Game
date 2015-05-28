@@ -3,13 +3,15 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <string>
-#include<vector>
+#include <vector>
+#include <fstream>
+#include <cmath>
 #include "Game.h"
-#include"mon.h"
+#include "mon.h"
 
 using namespace std;
 
-const int TILE = 64; // size of tiles in pixels
+const int TILE_SIZE = 64; // size of tiles in pixels
 
 int main(int argc, char **argv) {
 	ALLEGRO_DISPLAY *display = NULL;
@@ -55,9 +57,21 @@ int main(int argc, char **argv) {
 		   return -2;
    }
 
+   //load tiles
+   tiles = new ALLEGRO_BITMAP*[NUM_TILES];
+   for(int i = 0; i < NUM_TILES; i++)
+   {
+	   string path = "Tiles/" + to_string((long long)i) + ".png";
+	   tiles[i] = al_load_bitmap(path.c_str());
+	   if(!tiles[i])
+		   return -2;
+   }
+
 	al_set_window_title(display, "Game");
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	
+	loadMap("test");
+
 	vector<Mon> mons;
 	double last_step = 0; // test variable for player movement
 	// create some monsters for render testing
@@ -65,7 +79,32 @@ int main(int argc, char **argv) {
 	mons.push_back(Mon(MON_SLIME, 4, 2));
 	mons.push_back(Mon(MON_SLIME, 5, 1));
 	
+	//debug stuff
+	p.x = 4;
+	p.y = 4;
 	while(true) { // main loop
+		//render stuff before keyboard input
+		al_clear_to_color(al_map_rgb(63, 47, 31)); // a soft brown
+		//render map
+		for(int x = p.x - 5; x <= p.x + 5; x++)
+			for(int y = p.y - 4; y <= p.y + 4; y++)
+			{
+				if(x>=0&&x<mapSize&&y>=0&&y<mapSize)
+				{
+					al_draw_bitmap(tiles[map[x+mapSize*y]],TILE_SIZE*(x-p.x+5),TILE_SIZE*(y-p.y+4), 0);
+				}
+			}
+		// render monsters
+		for(unsigned i = 0; i < mons.size(); ++i) {
+			al_draw_bitmap(sprites[0], TILE_SIZE * mons[i].x, TILE_SIZE * mons[i].y, 0);
+		}
+		// show off all the sprites
+		for(int i = 0; i < NUM_SPRITES; ++i) {
+			al_draw_bitmap(sprites[i], TILE_SIZE * i, TILE_SIZE * 7, 0);
+		}
+		// finish rendering
+		al_flip_display();
+
 		// listen for events from allegro
 		ALLEGRO_EVENT event;
 		ALLEGRO_TIMEOUT timeout;
@@ -87,20 +126,26 @@ int main(int argc, char **argv) {
 				last_step = now; ++mons[0].x;
 			}
 		}
-		// rendering
-		al_clear_to_color(al_map_rgb(63, 47, 31)); // a soft brown
-		// render monsters
-		for(unsigned i = 0; i < mons.size(); ++i) {
-			al_draw_bitmap(sprites[0], TILE * mons[i].x, TILE * mons[i].y, 0);
-		}
-		// show off all the sprites
-		for(int i = 0; i < NUM_SPRITES; ++i) {
-			al_draw_bitmap(sprites[i], TILE * i, TILE * 7, 0);
-		}
-		// finish rendering
-		al_flip_display();
 	}
 	
 	return 0;
 }
 
+void loadMap(std::string name)
+{
+	ifstream in;
+	in.open("Maps/" + name + ".map",ios::in|ios::binary);
+	if(in.is_open())
+	{
+		in.seekg(0, in.end);
+		int length = in.tellg();
+		in.seekg(0, in.beg);
+		mapSize = sqrt((double)length/2.0);
+		if(map!=nullptr)
+			delete [] map;
+		map = new short[mapSize*mapSize];
+		in.read((char *)map,length);
+		currentMap = name;
+		in.close();
+	}
+}
