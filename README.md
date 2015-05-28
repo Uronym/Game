@@ -15,5 +15,5 @@ Add me!
 #### Linux (g++):
 
 ```
-g++ *.cpp *.h -o Game.out $(pkg-config --cflags --libs allegro-5.0 allegro_image-5.0) -std=c++0x -Wall
+g++ *.cpp *.h -o Game $(pkg-config --cflags --libs allegro-5.0 allegro_image-5.0) -std=c++0x -Wall
 ```
