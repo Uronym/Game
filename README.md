@@ -4,7 +4,7 @@ Yes, that's actually the name of the project, for now. A better name is a top pr
 
 ## Compile
 
-This is a work in progress. Add how you compile the game, so it isn't so hard!
+This is a work in progress. Add how you compile the game, so it isn't so hard for others!
 
 #### Windows (???):
 
