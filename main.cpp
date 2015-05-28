@@ -84,15 +84,16 @@ int main(int argc, char **argv) {
 	mons.push_back(Mon(MON_SLIME, 4, 2));
 	mons.push_back(Mon(MON_SLIME, 5, 1));
 	
+	ALLEGRO_TIMEOUT timeout;
+
 	while(true) { // main loop
 		double now = al_get_time(); // nice to know
 		// listen for events from allegro **BEFORE** rendering
 		// so we can display the results of any input on the same frame
-		ALLEGRO_EVENT event;
-		ALLEGRO_TIMEOUT timeout;
-		al_init_timeout(&timeout, 0);
-		bool is_event = al_wait_for_event_until(event_queue, &event, &timeout);
-		if(is_event && event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
+		ALLEGRO_EVENT allegroEvent;
+		al_init_timeout(&timeout, 1.0/120.0);
+		bool is_event = al_wait_for_event_until(event_queue, &allegroEvent, &timeout);
+		if(is_event && allegroEvent.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
 		// keyboard input
 		al_get_keyboard_state(&keyboard_state);
 		// too lazy to push close button? Good news!

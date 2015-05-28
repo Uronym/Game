@@ -13,7 +13,7 @@ mon_dat mon_data[MON_IDS] = {
 void Mon::step(MOVE_DIR dir) {
 	// step must follow speed
 	double now = al_get_time();
-	if(now - ostep < 1 / spe) return;
+	if(now - ostep < 1.0 / spe) return;
 	// step must not collide
 	int nx = x; int ny = y; // new position
 	switch(dir) {
@@ -28,7 +28,7 @@ void Mon::step(MOVE_DIR dir) {
 		case MOVE_DIRS: // should probably error
 			return;
 	}
-	if(nx < 0 || nx > mapSize || ny < 0 || ny > mapSize) return;
+	if(nx < 0 || nx >= mapSize || ny < 0 || ny >= mapSize) return;
 	if(map[nx + ny * mapSize] == 1) return;
 	// passed all checks!
 	ox = x; oy = y;
