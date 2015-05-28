@@ -13,6 +13,12 @@ using namespace std;
 
 const int TILE_SIZE = 64; // size of tiles in pixels
 
+// this stuff probably doesn't belong in main, but...
+double limit(double n, double mn, double mx) {
+	return n < mn ? mn : n > mx ? mx : n;
+}
+double lerp(double a, double b, double x) {return a * (1 - x) + b * x;}
+
 int main(int argc, char **argv) {
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -73,39 +79,15 @@ int main(int argc, char **argv) {
 	loadMap("test");
 
 	vector<Mon> mons;
-	double last_step = 0; // test variable for player movement
 	// create some monsters for render testing
 	mons.push_back(Mon(MON_SLIME, 3, 3));
 	mons.push_back(Mon(MON_SLIME, 4, 2));
 	mons.push_back(Mon(MON_SLIME, 5, 1));
 	
-	//debug stuff
-	p.x = 4;
-	p.y = 4;
 	while(true) { // main loop
-		//render stuff before keyboard input
-		al_clear_to_color(al_map_rgb(63, 47, 31)); // a soft brown
-		//render map
-		for(int x = p.x - 5; x <= p.x + 5; x++)
-			for(int y = p.y - 4; y <= p.y + 4; y++)
-			{
-				if(x>=0&&x<mapSize&&y>=0&&y<mapSize)
-				{
-					al_draw_bitmap(tiles[map[x+mapSize*y]],TILE_SIZE*(x-p.x+5),TILE_SIZE*(y-p.y+4), 0);
-				}
-			}
-		// render monsters
-		for(unsigned i = 0; i < mons.size(); ++i) {
-			al_draw_bitmap(sprites[0], TILE_SIZE * mons[i].x, TILE_SIZE * mons[i].y, 0);
-		}
-		// show off all the sprites
-		for(int i = 0; i < NUM_SPRITES; ++i) {
-			al_draw_bitmap(sprites[i], TILE_SIZE * i, TILE_SIZE * 7, 0);
-		}
-		// finish rendering
-		al_flip_display();
-
-		// listen for events from allegro
+		double now = al_get_time(); // nice to know
+		// listen for events from allegro **BEFORE** rendering
+		// so we can display the results of any input on the same frame
 		ALLEGRO_EVENT event;
 		ALLEGRO_TIMEOUT timeout;
 		al_init_timeout(&timeout, 0);
@@ -113,19 +95,40 @@ int main(int argc, char **argv) {
 		if(is_event && event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
 		// keyboard input
 		al_get_keyboard_state(&keyboard_state);
+		// too lazy to push close button? Good news!
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_Q)) {break;}
 		// player movement
-		double now = al_get_time();
-		if(now - last_step > 0.25) {
-			if(al_key_down(&keyboard_state, ALLEGRO_KEY_UP)) {
-				last_step = now; --mons[0].y;
-			} if(al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)) {
-				last_step = now; ++mons[0].y;
-			} if(al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)) {
-				last_step = now; --mons[0].x;
-			} if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT)) {
-				last_step = now; ++mons[0].x;
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_UP))
+			mons[0].step(MOVE_UP);
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN))
+			mons[0].step(MOVE_DOWN);
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT))
+			mons[0].step(MOVE_LEFT);
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT))
+			mons[0].step(MOVE_RIGHT);
+		// rendering
+		al_clear_to_color(al_map_rgb(63, 47, 31)); // clear to a soft brown
+		//render map
+		for(int x = mons[1].x - 5; x <= mons[1].x + 5; x++) {
+			for(int y = mons[1].y - 4; y <= mons[1].y + 4; y++) {
+				if(x >= 0 && x < mapSize && y>=0 && y < mapSize) {
+					al_draw_bitmap(tiles[map[x+mapSize*y]],TILE_SIZE*x,TILE_SIZE*y, 0);
+				}
 			}
 		}
+		// render monsters
+		for(unsigned i = 0; i < mons.size(); ++i) {
+			double x = limit((now - mons[i].ostep) * mons[i].spe, 0, 1);
+			double ix = lerp(mons[i].ox, mons[i].x, x);
+			double iy = lerp(mons[i].oy, mons[i].y, x);
+			al_draw_bitmap(sprites[0], TILE_SIZE * ix, TILE_SIZE * iy, 0);
+		}
+		// show off all the sprites
+		for(int i = 0; i < NUM_SPRITES; ++i) {
+			al_draw_bitmap(sprites[i], TILE_SIZE * i, TILE_SIZE * 7, 0);
+		}
+		// finish rendering
+		al_flip_display();
 	}
 	
 	return 0;
