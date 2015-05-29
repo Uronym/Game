@@ -1,23 +1,22 @@
 
 #include <stdio.h>
 #include <allegro5/allegro.h>
+#include<allegro5/allegro_color.h>
 #include <allegro5/allegro_image.h>
+#include<allegro5/allegro_primitives.h>
 #include <string>
 #include <vector>
 #include <fstream>
 #include <cmath>
-#include "Game.h"
+#include"game.h"
+#include"item.h"
 #include "mon.h"
 
 using namespace std;
 
 const int TILE_SIZE = 64; // size of tiles in pixels
-
-// this stuff probably doesn't belong in main, but...
-double limit(double n, double mn, double mx) {
-	return n < mn ? mn : n > mx ? mx : n;
-}
-double lerp(double a, double b, double x) {return a * (1 - x) + b * x;}
+const int SCREEN_W = TILE_SIZE * 11;
+const int SCREEN_H = TILE_SIZE * 9;
 
 int main(int argc, char **argv) {
 	ALLEGRO_DISPLAY *display = NULL;
@@ -34,7 +33,7 @@ int main(int argc, char **argv) {
       return -1;
    }
 
-   display = al_create_display(704, 576);
+   display = al_create_display(SCREEN_W, SCREEN_H);
    if(!display) {
       fprintf(stderr, "failed to create display!\n");
       return -1;
@@ -73,25 +72,30 @@ int main(int argc, char **argv) {
 		   return -2;
    }
 
-	al_set_window_title(display, "Game");
+	al_init_primitives_addon();
 	al_register_event_source(event_queue, al_get_display_event_source(display));
+	al_set_window_title(display, "Game");
+	// colors probably should go in another file
+	const ALLEGRO_COLOR COLOR_RED = al_map_rgb(255, 0, 0);
+	const ALLEGRO_COLOR COLOR_GREEN = al_map_rgb(0, 255, 0);
 	
 	loadMap("test");
 
-	vector<Mon> mons;
-	// create some monsters for render testing
+	// create some monsters for testing
 	mons.push_back(Mon(MON_SLIME, 3, 3));
 	mons.push_back(Mon(MON_SLIME, 4, 2));
 	mons.push_back(Mon(MON_SLIME, 5, 1));
+	// create some items for testing, too
+	items.push_back(Item(ITEM_POTION, 5, 5));
+	items.push_back(Item(ITEM_POTION, 4, 5));
 	
 	ALLEGRO_TIMEOUT timeout;
 
 	while(true) { // main loop
-		double now = al_get_time(); // nice to know
 		// listen for events from allegro **BEFORE** rendering
 		// so we can display the results of any input on the same frame
-		ALLEGRO_EVENT allegroEvent;
-		al_init_timeout(&timeout, 1.0/120.0);
+		ALLEGRO_EVENT allegroEvent; //event is a c++ keyword, don't use it as a variable name
+		al_init_timeout(&timeout, 1.0/60.0);
 		bool is_event = al_wait_for_event_until(event_queue, &allegroEvent, &timeout);
 		if(is_event && allegroEvent.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
 		// keyboard input
@@ -107,26 +111,49 @@ int main(int argc, char **argv) {
 			mons[0].step(MOVE_LEFT);
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT))
 			mons[0].step(MOVE_RIGHT);
-		// rendering
-		al_clear_to_color(al_map_rgb(63, 47, 31)); // clear to a soft brown
-		//render map
-		for(int x = mons[1].x - 5; x <= mons[1].x + 5; x++) {
-			for(int y = mons[1].y - 4; y <= mons[1].y + 4; y++) {
-				if(x >= 0 && x < mapSize && y>=0 && y < mapSize) {
-					al_draw_bitmap(tiles[map[x+mapSize*y]],TILE_SIZE*x,TILE_SIZE*y, 0);
+		// pick up items
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_G)) {
+			for(unsigned i = 0; i < items.size(); ++i) {
+				if(items[i].x == mons[0].x && items[i].y == mons[0].y) {
+					mons[0].inv.push_back(items[i]);
+					items.erase(items.begin() + i);
 				}
 			}
 		}
+		// rendering
+		// "camera" position
+		double px; double py;
+		mons[0].rpos(px, py);
+		al_clear_to_color(al_map_rgb(63, 47, 31)); // clear to a soft brown
+		//render map
+		for(int x = 0; x < mapSize; ++x) {
+			for(int y = 0; y < mapSize; ++y) {
+				double rx = TILE_SIZE * (5 + x - px);
+				double ry = TILE_SIZE * (4 + y - py);
+				al_draw_bitmap(tiles[map[x + y * mapSize]], rx, ry, 0);
+			}
+		}
+		// render items
+		for(unsigned i = 0; i < items.size(); ++i) {
+			double rx = TILE_SIZE * (5 + items[i].x - px);
+			double ry = TILE_SIZE * (4 + items[i].y - py);
+			al_draw_bitmap(sprites[1], rx, ry, 0);
+		}
 		// render monsters
 		for(unsigned i = 0; i < mons.size(); ++i) {
-			double x = limit((now - mons[i].ostep) * mons[i].spe, 0, 1);
-			double ix = lerp(mons[i].ox, mons[i].x, x);
-			double iy = lerp(mons[i].oy, mons[i].y, x);
-			al_draw_bitmap(sprites[0], TILE_SIZE * ix, TILE_SIZE * iy, 0);
+			double ix; double iy;
+			mons[i].rpos(ix, iy);
+			double rx = TILE_SIZE * (5 + ix - px);
+			double ry = TILE_SIZE * (4 + iy - py);
+			al_draw_bitmap(sprites[0], rx, ry, 0);
+			// and a health bar for each!
+			double hp_pc = mons[i].hp / (double)mons[i].hp_max;
+			al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + TILE_SIZE / 8, COLOR_RED);
+			al_draw_filled_rectangle(rx, ry, rx + hp_pc * TILE_SIZE, ry + TILE_SIZE / 8, COLOR_GREEN);
 		}
-		// show off all the sprites
-		for(int i = 0; i < NUM_SPRITES; ++i) {
-			al_draw_bitmap(sprites[i], TILE_SIZE * i, TILE_SIZE * 7, 0);
+		// render inventory
+		for(unsigned i = 0; i < mons[0].inv.size(); ++i) {
+			al_draw_bitmap(sprites[1], TILE_SIZE * i, TILE_SIZE * 8, 0);
 		}
 		// finish rendering
 		al_flip_display();

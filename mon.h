@@ -2,6 +2,8 @@
 #define MON_H
 
 #include<string>
+#include<vector>
+#include"item.h"
 
 enum MON_ID { // indices for mon_data
 	MON_SLIME,
@@ -30,16 +32,19 @@ extern mon_dat mon_data[MON_IDS]; // data about all monster types
 struct Mon { // an individual monster
 	MON_ID id; // index in mon_data
 	int hp_max; int mp_max; int hp; int mp; double spe;
+	std::vector<Item> inv; // inventory
 	int x; int y; // position
 	int ox; int oy; // old step position
 	double ostep; // old step time
-	// mon attempts to take a step in dir
-	void step(MOVE_DIR dir);
+	void step(MOVE_DIR dir); // mon attempts to take a step in dir
+	void rpos(double& rx, double& ry); // get rendering position
 	// construct with given id and position
 	Mon(MON_ID id, int x, int y):
 		hp_max(mon_data[id].hp_base), mp_max(mon_data[id].mp_base),
 		hp(hp_max), mp(mp_max), spe(mon_data[id].spe_base),
 		x(x), y(y), ox(x), oy(y) {}
 };
+
+extern std::vector<Mon> mons;
 
 #endif
