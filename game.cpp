@@ -1,8 +1,8 @@
 
 #include<string>
-#include"Game.h"
+#include"game.h"
 
 int mapSize = 0;
 short* map = nullptr;
-std::string currentMap = "test";
+std::string currentMap;
 

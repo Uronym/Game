@@ -1,6 +1,7 @@
 
 #include<allegro5/allegro.h>
-#include"Game.h"
+#include<vector>
+#include"game.h"
 #include"mon.h"
 
 // useful things that probably belong in another file
@@ -11,6 +12,8 @@ double lerp(double a, double b, double c) {return a * (1 - c) + b * c;}
 mon_dat mon_data[MON_IDS] = {
 	mon_dat("slime", 10, 10, 4),
 };
+
+std::vector<Mon> mons;
 
 // mon attempts to take a step in dir
 void Mon::step(MOVE_DIR dir) {
@@ -31,8 +34,18 @@ void Mon::step(MOVE_DIR dir) {
 		case MOVE_DIRS: // should probably error
 			return;
 	}
+	// step must not collide with map
 	if(nx < 0 || nx > mapSize || ny < 0 || ny > mapSize) return;
 	if(map[nx + ny * mapSize] == 1) return;
+	// if step collides with monster, attack
+	for(unsigned i = 0; i < mons.size(); ++i) {
+		if(mons[i].x == nx && mons[i].y == ny) {
+			--mons[i].hp;
+			ox = x; oy = y;
+			ostep = now;
+			return;
+		}
+	}
 	// passed all checks!
 	ox = x; oy = y;
 	ostep = now;

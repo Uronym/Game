@@ -45,4 +45,6 @@ struct Mon { // an individual monster
 		x(x), y(y), ox(x), oy(y) {}
 };
 
+extern std::vector<Mon> mons;
+
 #endif

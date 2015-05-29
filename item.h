@@ -2,6 +2,7 @@
 #define ITEM_H
 
 #include<string>
+#include<vector>
 
 enum ITEM_ID { // indices for item_data
 	ITEM_POTION,
@@ -21,5 +22,7 @@ struct Item { // an individual item
 	// construct with given id and position
 	Item(ITEM_ID id, int x, int y): id(id), x(x), y(y) {}
 };
+
+extern std::vector<Item> items;
 
 #endif

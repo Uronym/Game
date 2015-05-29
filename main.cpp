@@ -8,7 +8,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
-#include "Game.h"
+#include"game.h"
 #include"item.h"
 #include "mon.h"
 
@@ -81,8 +81,6 @@ int main(int argc, char **argv) {
 	
 	loadMap("test");
 
-	vector<Mon> mons;
-	vector<Item> items;
 	// create some monsters for testing
 	mons.push_back(Mon(MON_SLIME, 3, 3));
 	mons.push_back(Mon(MON_SLIME, 4, 2));
@@ -92,7 +90,6 @@ int main(int argc, char **argv) {
 	items.push_back(Item(ITEM_POTION, 4, 5));
 	
 	while(true) { // main loop
-		double now = al_get_time(); // nice to know
 		// listen for events from allegro **BEFORE** rendering
 		// so we can display the results of any input on the same frame
 		ALLEGRO_EVENT event;
@@ -149,8 +146,9 @@ int main(int argc, char **argv) {
 			double ry = TILE_SIZE * (4 + iy - py);
 			al_draw_bitmap(sprites[0], rx, ry, 0);
 			// and a health bar for each!
+			double hp_pc = mons[i].hp / (double)mons[i].hp_max;
 			al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + TILE_SIZE / 8, COLOR_RED);
-			al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + (mons[i].hp / mons[i].hp_max) * (TILE_SIZE / 8), COLOR_GREEN);
+			al_draw_filled_rectangle(rx, ry, rx + hp_pc * TILE_SIZE, ry + TILE_SIZE / 8, COLOR_GREEN);
 		}
 		// render inventory
 		for(unsigned i = 0; i < mons[0].inv.size(); ++i) {
