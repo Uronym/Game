@@ -14,12 +14,6 @@ using namespace std;
 
 const int TILE_SIZE = 64; // size of tiles in pixels
 
-// this stuff probably doesn't belong in main, but...
-double limit(double n, double mn, double mx) {
-	return n < mn ? mn : n > mx ? mx : n;
-}
-double lerp(double a, double b, double x) {return a * (1 - x) + b * x;}
-
 int main(int argc, char **argv) {
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -112,25 +106,28 @@ int main(int argc, char **argv) {
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT))
 			mons[0].step(MOVE_RIGHT);
 		// rendering
+		// "camera" position
+		double px; double py;
+		mons[0].rpos(px, py);
 		al_clear_to_color(al_map_rgb(63, 47, 31)); // clear to a soft brown
 		//render map
-		for(int x = mons[1].x - 5; x <= mons[1].x + 5; x++) {
-			for(int y = mons[1].y - 4; y <= mons[1].y + 4; y++) {
-				if(x >= 0 && x < mapSize && y>=0 && y < mapSize) {
-					al_draw_bitmap(tiles[map[x+mapSize*y]],TILE_SIZE*x,TILE_SIZE*y, 0);
-				}
+		for(int x = 0; x < mapSize; ++x) {
+			for(int y = 0; y < mapSize; ++y) {
+				double rx = 5 + x - px; double ry = 4 + y - py;
+				al_draw_bitmap(tiles[map[x + y * mapSize]], TILE_SIZE * rx, TILE_SIZE * ry, 0);
 			}
 		}
 		// render monsters
 		for(unsigned i = 0; i < mons.size(); ++i) {
-			double x = limit((now - mons[i].ostep) * mons[i].spe, 0, 1);
-			double ix = lerp(mons[i].ox, mons[i].x, x);
-			double iy = lerp(mons[i].oy, mons[i].y, x);
-			al_draw_bitmap(sprites[0], TILE_SIZE * ix, TILE_SIZE * iy, 0);
+			double ix; double iy;
+			mons[i].rpos(ix, iy);
+			double rx = 5 + ix - px; double ry = 4 + iy - py;
+			al_draw_bitmap(sprites[0], TILE_SIZE * rx, TILE_SIZE * ry, 0);
 		}
 		// render items
 		for(unsigned i = 0; i < items.size(); ++i) {
-			al_draw_bitmap(sprites[1], TILE_SIZE * items[i].x, TILE_SIZE * items[i].y, 0);
+			double rx = 5 + items[i].x - px; double ry = 4 + items[i].y - py;
+			al_draw_bitmap(sprites[1], TILE_SIZE * rx, TILE_SIZE * ry, 0);
 		}
 		// show off all the sprites
 		for(int i = 0; i < NUM_SPRITES; ++i) {

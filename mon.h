@@ -36,8 +36,8 @@ struct Mon { // an individual monster
 	int x; int y; // position
 	int ox; int oy; // old step position
 	double ostep; // old step time
-	// mon attempts to take a step in dir
-	void step(MOVE_DIR dir);
+	void step(MOVE_DIR dir); // mon attempts to take a step in dir
+	void rpos(double& rx, double& ry); // get rendering position
 	// construct with given id and position
 	Mon(MON_ID id, int x, int y):
 		hp_max(mon_data[id].hp_base), mp_max(mon_data[id].mp_base),
