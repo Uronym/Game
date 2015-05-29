@@ -1,7 +1,9 @@
 
 #include <stdio.h>
 #include <allegro5/allegro.h>
+#include<allegro5/allegro_color.h>
 #include <allegro5/allegro_image.h>
+#include<allegro5/allegro_primitives.h>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -13,6 +15,8 @@
 using namespace std;
 
 const int TILE_SIZE = 64; // size of tiles in pixels
+const int SCREEN_W = TILE_SIZE * 11;
+const int SCREEN_H = TILE_SIZE * 9;
 
 int main(int argc, char **argv) {
 	ALLEGRO_DISPLAY *display = NULL;
@@ -29,7 +33,7 @@ int main(int argc, char **argv) {
       return -1;
    }
 
-   display = al_create_display(704, 576);
+   display = al_create_display(SCREEN_W, SCREEN_H);
    if(!display) {
       fprintf(stderr, "failed to create display!\n");
       return -1;
@@ -68,8 +72,12 @@ int main(int argc, char **argv) {
 		   return -2;
    }
 
-	al_set_window_title(display, "Game");
+	al_init_primitives_addon();
 	al_register_event_source(event_queue, al_get_display_event_source(display));
+	al_set_window_title(display, "Game");
+	// colors probably should go in another file
+	const ALLEGRO_COLOR COLOR_RED = al_map_rgb(255, 0, 0);
+	const ALLEGRO_COLOR COLOR_GREEN = al_map_rgb(0, 255, 0);
 	
 	loadMap("test");
 
@@ -105,6 +113,15 @@ int main(int argc, char **argv) {
 			mons[0].step(MOVE_LEFT);
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT))
 			mons[0].step(MOVE_RIGHT);
+		// pick up items
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_G)) {
+			for(unsigned i = 0; i < items.size(); ++i) {
+				if(items[i].x == mons[0].x && items[i].y == mons[0].y) {
+					mons[0].inv.push_back(items[i]);
+					items.erase(items.begin() + i);
+				}
+			}
+		}
 		// rendering
 		// "camera" position
 		double px; double py;
@@ -113,25 +130,31 @@ int main(int argc, char **argv) {
 		//render map
 		for(int x = 0; x < mapSize; ++x) {
 			for(int y = 0; y < mapSize; ++y) {
-				double rx = 5 + x - px; double ry = 4 + y - py;
-				al_draw_bitmap(tiles[map[x + y * mapSize]], TILE_SIZE * rx, TILE_SIZE * ry, 0);
+				double rx = TILE_SIZE * (5 + x - px);
+				double ry = TILE_SIZE * (4 + y - py);
+				al_draw_bitmap(tiles[map[x + y * mapSize]], rx, ry, 0);
 			}
+		}
+		// render items
+		for(unsigned i = 0; i < items.size(); ++i) {
+			double rx = TILE_SIZE * (5 + items[i].x - px);
+			double ry = TILE_SIZE * (4 + items[i].y - py);
+			al_draw_bitmap(sprites[1], rx, ry, 0);
 		}
 		// render monsters
 		for(unsigned i = 0; i < mons.size(); ++i) {
 			double ix; double iy;
 			mons[i].rpos(ix, iy);
-			double rx = 5 + ix - px; double ry = 4 + iy - py;
-			al_draw_bitmap(sprites[0], TILE_SIZE * rx, TILE_SIZE * ry, 0);
+			double rx = TILE_SIZE * (5 + ix - px);
+			double ry = TILE_SIZE * (4 + iy - py);
+			al_draw_bitmap(sprites[0], rx, ry, 0);
+			// and a health bar for each!
+			al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + TILE_SIZE / 8, COLOR_RED);
+			al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + (mons[i].hp / mons[i].hp_max) * (TILE_SIZE / 8), COLOR_GREEN);
 		}
-		// render items
-		for(unsigned i = 0; i < items.size(); ++i) {
-			double rx = 5 + items[i].x - px; double ry = 4 + items[i].y - py;
-			al_draw_bitmap(sprites[1], TILE_SIZE * rx, TILE_SIZE * ry, 0);
-		}
-		// show off all the sprites
-		for(int i = 0; i < NUM_SPRITES; ++i) {
-			al_draw_bitmap(sprites[i], TILE_SIZE * i, TILE_SIZE * 7, 0);
+		// render inventory
+		for(unsigned i = 0; i < mons[0].inv.size(); ++i) {
+			al_draw_bitmap(sprites[1], TILE_SIZE * i, TILE_SIZE * 8, 0);
 		}
 		// finish rendering
 		al_flip_display();
