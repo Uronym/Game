@@ -7,6 +7,7 @@
 #include <fstream>
 #include <cmath>
 #include "Game.h"
+#include"item.h"
 #include "mon.h"
 
 using namespace std;
@@ -79,10 +80,14 @@ int main(int argc, char **argv) {
 	loadMap("test");
 
 	vector<Mon> mons;
-	// create some monsters for render testing
+	vector<Item> items;
+	// create some monsters for testing
 	mons.push_back(Mon(MON_SLIME, 3, 3));
 	mons.push_back(Mon(MON_SLIME, 4, 2));
 	mons.push_back(Mon(MON_SLIME, 5, 1));
+	// create some items for testing, too
+	items.push_back(Item(ITEM_POTION, 5, 5));
+	items.push_back(Item(ITEM_POTION, 4, 5));
 	
 	while(true) { // main loop
 		double now = al_get_time(); // nice to know
@@ -90,7 +95,7 @@ int main(int argc, char **argv) {
 		// so we can display the results of any input on the same frame
 		ALLEGRO_EVENT event;
 		ALLEGRO_TIMEOUT timeout;
-		al_init_timeout(&timeout, 0);
+		al_init_timeout(&timeout, 1 / 60);
 		bool is_event = al_wait_for_event_until(event_queue, &event, &timeout);
 		if(is_event && event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
 		// keyboard input
@@ -122,6 +127,10 @@ int main(int argc, char **argv) {
 			double ix = lerp(mons[i].ox, mons[i].x, x);
 			double iy = lerp(mons[i].oy, mons[i].y, x);
 			al_draw_bitmap(sprites[0], TILE_SIZE * ix, TILE_SIZE * iy, 0);
+		}
+		// render items
+		for(unsigned i = 0; i < items.size(); ++i) {
+			al_draw_bitmap(sprites[1], TILE_SIZE * items[i].x, TILE_SIZE * items[i].y, 0);
 		}
 		// show off all the sprites
 		for(int i = 0; i < NUM_SPRITES; ++i) {

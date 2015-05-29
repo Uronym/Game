@@ -1,6 +1,5 @@
 
 #include<allegro5/allegro.h>
-#include<string>
 #include"Game.h"
 #include"mon.h"
 
@@ -9,7 +8,7 @@ mon_dat mon_data[MON_IDS] = {
 	mon_dat("slime", 10, 10, 4),
 };
 
-// mon attemps to take a step in dir
+// mon attempts to take a step in dir
 void Mon::step(MOVE_DIR dir) {
 	// step must follow speed
 	double now = al_get_time();
