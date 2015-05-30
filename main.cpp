@@ -88,14 +88,15 @@ int main(int argc, char **argv) {
 	items.push_back(Item(ITEM_POTION, 5, 5));
 	items.push_back(Item(ITEM_POTION, 4, 5));
 	
+	ALLEGRO_TIMEOUT timeout;
+
 	while(true) { // main loop
 		// listen for events from allegro **BEFORE** rendering
 		// so we can display the results of any input on the same frame
-		ALLEGRO_EVENT event;
-		ALLEGRO_TIMEOUT timeout;
-		al_init_timeout(&timeout, 1 / 60);
-		bool is_event = al_wait_for_event_until(event_queue, &event, &timeout);
-		if(is_event && event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
+		ALLEGRO_EVENT allegroEvent; //event is a c++ keyword, don't use it as a variable name
+		al_init_timeout(&timeout, 1.0/60.0);
+		bool is_event = al_wait_for_event_until(event_queue, &allegroEvent, &timeout);
+		if(is_event && allegroEvent.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
 		// keyboard input
 		al_get_keyboard_state(&keyboard_state);
 		// too lazy to push close button? Good news!

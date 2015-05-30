@@ -33,7 +33,7 @@ void Mon::wield(int i) {
 void Mon::step(MOVE_DIR dir) {
 	// step must follow speed
 	double now = al_get_time();
-	if(now - ostep < 1 / spe) return;
+	if(now - ostep < 1.0 / spe) return;
 	// step must not collide
 	int nx = x; int ny = y; // new position
 	switch(dir) {
@@ -48,8 +48,8 @@ void Mon::step(MOVE_DIR dir) {
 		case MOVE_DIRS: // should probably error
 			return;
 	}
+	if(nx < 0 || nx >= mapSize || ny < 0 || ny >= mapSize) return;
 	// step must not collide with map
-	if(nx < 0 || nx > mapSize || ny < 0 || ny > mapSize) return;
 	if(map[nx + ny * mapSize] == 1) return;
 	// if step collides with monster, attack
 	for(unsigned i = 0; i < mons.size(); ++i) {
