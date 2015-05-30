@@ -15,6 +15,20 @@ mon_dat mon_data[MON_IDS] = {
 
 std::vector<Mon> mons;
 
+void Mon::dmg(int dp) {
+	hp = limit(hp - dp, 0, hp_max);
+}
+
+void Mon::wield(int i) {
+	if(item != NULL) inv.push_back(*item);
+	if(i < 0 || i >= inv.size()) {
+		item = NULL;
+	} else {
+		item = &inv[i];
+		inv.erase(inv.begin() + i);
+	}
+}
+
 // mon attempts to take a step in dir
 void Mon::step(MOVE_DIR dir) {
 	// step must follow speed
@@ -40,7 +54,7 @@ void Mon::step(MOVE_DIR dir) {
 	// if step collides with monster, attack
 	for(unsigned i = 0; i < mons.size(); ++i) {
 		if(mons[i].x == nx && mons[i].y == ny) {
-			--mons[i].hp;
+			mons[i].dmg(item == NULL ? 1 : item->dat->dmg);
 			ox = x; oy = y;
 			ostep = now;
 			return;

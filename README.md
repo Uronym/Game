@@ -2,15 +2,17 @@
 
 Yes, that's actually the name of the project, for now. A better name is a top priority once the project is large enough to justify one!
 
+## Controls
+
+    Key | Effect
+-------:|:-------
+ Arrows | Movement
+      G | Pick up item underfoot
+      I | Wield first item in inventory
+      Q | Quit/exit program
+      U | Unwield item
+
 ## Compile
-
-This is a work in progress. Add how you compile the game, so it isn't so hard for others!
-
-#### Windows (???):
-
-```
-Add me!
-```
 
 #### Linux (g++):
 

@@ -1,7 +1,6 @@
 
 #include <stdio.h>
 #include <allegro5/allegro.h>
-#include<allegro5/allegro_color.h>
 #include <allegro5/allegro_image.h>
 #include<allegro5/allegro_primitives.h>
 #include <string>
@@ -119,6 +118,10 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
+		// wield items
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_I)) mons[0].wield(0);
+		// unwield items
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_U)) mons[0].wield(-1);
 		// rendering
 		// "camera" position
 		double px; double py;
@@ -149,6 +152,10 @@ int main(int argc, char **argv) {
 			double hp_pc = mons[i].hp / (double)mons[i].hp_max;
 			al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + TILE_SIZE / 8, COLOR_RED);
 			al_draw_filled_rectangle(rx, ry, rx + hp_pc * TILE_SIZE, ry + TILE_SIZE / 8, COLOR_GREEN);
+		}
+		// render wielded item
+		if(mons[0].item != NULL) {
+			al_draw_bitmap(sprites[1], TILE_SIZE * 5, TILE_SIZE * 4, 0);
 		}
 		// render inventory
 		for(unsigned i = 0; i < mons[0].inv.size(); ++i) {
