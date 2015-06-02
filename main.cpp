@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
 	const ALLEGRO_COLOR COLOR_RED = al_map_rgb(255, 0, 0);
 	const ALLEGRO_COLOR COLOR_GREEN = al_map_rgb(0, 255, 0);
 	
-	loadMap("test");
+	loadMap("main");
 
 	// create some monsters for testing
 	mons.push_back(Mon(MON_SLIME, 3, 3));
