@@ -5,9 +5,9 @@
 #include<string>
 
 const int NUM_SPRITES = 4;
-const int NUM_TILES = 2;
-static ALLEGRO_BITMAP** sprites;
-static ALLEGRO_BITMAP** tiles;
+const int NUM_TILES = 5;
+extern ALLEGRO_BITMAP** sprites;
+extern ALLEGRO_BITMAP** tiles;
 extern short* map;
 extern int mapSize;
 extern std::string currentMap;
