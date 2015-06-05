@@ -4,18 +4,11 @@
 #include<string>
 #include<vector>
 #include"item.h"
+#include"vec2.h"
 
 enum MON_ID { // indices for mon_data
 	MON_SLIME,
 	MON_IDS, // number of MON_IDs
-};
-
-enum MOVE_DIR { // movement directions
-	MOVE_UP,
-	MOVE_DOWN,
-	MOVE_LEFT,
-	MOVE_RIGHT,
-	MOVE_DIRS, // number of MOVE_DIRs
 };
 
 struct mon_dat { // data structure of mon_data

@@ -7,15 +7,41 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include"astar.h"
 #include"game.h"
 #include"item.h"
-#include "mon.h"
+#include"mon.h"
+#include"vec2.h"
 
 using namespace std;
 
 const int TILE_SIZE = 64; // size of tiles in pixels
 const int SCREEN_W = TILE_SIZE * 11;
 const int SCREEN_H = TILE_SIZE * 9;
+
+bool** cmap;
+
+void update_cmap() {
+	delete[] cmap;
+	cmap = new bool*[mapSize];
+	for(int x = 0; x < mapSize; ++x) cmap[x] = new bool[mapSize];
+	for(int x = 0; x < mapSize; ++x) {
+		for(int y = 0; y < mapSize; ++y) {
+			cmap[x][y] = map[x + y * mapSize] == 1;
+		}
+	}
+}
+
+// an extremely awkward way to move the other monsters!
+// (assumes player is mons[0], among other things)
+void move_others() {
+	update_cmap();
+	for(unsigned i = 1; i < mons.size(); ++i) {
+		MOVE_DIR dir; // vector to step in
+		pathfind(dir, mons[i].x, mons[i].y, mons[0].x, mons[0].y, cmap, mapSize);
+		mons[i].step(dir);
+	}
+}
 
 int main(int argc, char **argv) {
 	ALLEGRO_DISPLAY *display = NULL;
@@ -102,14 +128,15 @@ int main(int argc, char **argv) {
 		// too lazy to push close button? Good news!
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_Q)) {break;}
 		// player movement
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_UP))
-			mons[0].step(MOVE_UP);
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN))
-			mons[0].step(MOVE_DOWN);
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT))
-			mons[0].step(MOVE_LEFT);
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT))
-			mons[0].step(MOVE_RIGHT);
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_UP)) {
+			mons[0].step(MOVE_UP); move_others();
+		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)) {
+			mons[0].step(MOVE_DOWN); move_others();
+		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)) {
+			mons[0].step(MOVE_LEFT); move_others();
+		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT)) {
+			mons[0].step(MOVE_RIGHT); move_others();
+		}
 		// pick up items
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_G)) {
 			for(unsigned i = 0; i < items.size(); ++i) {
