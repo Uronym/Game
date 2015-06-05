@@ -129,8 +129,10 @@ int main(int argc, char **argv) {
 		mons[0].rpos(px, py);
 		al_clear_to_color(al_map_rgb(63, 47, 31)); // clear to a soft brown
 		//render map
-		for(int x = 0; x < mapSize; ++x) {
-			for(int y = 0; y < mapSize; ++y) {
+		for(int x = mons[0].x - 6; x < mons[0].x + 7; ++x) {
+			for(int y = mons[0].y - 5; y < mons[0].y + 6; ++y) {
+				if(x < 0) continue;
+				if(y < 0) continue;
 				double rx = TILE_SIZE * (5 + x - px);
 				double ry = TILE_SIZE * (4 + y - py);
 				al_draw_bitmap(tiles[map[x + y * mapSize]], rx, ry, 0);
