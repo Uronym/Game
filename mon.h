@@ -33,7 +33,7 @@ struct Mon { // an individual monster
 	std::vector<Item> inv; // inventory
 	void dmg(int dp); // cause hp damage
 	void wield(int i); // wield item at i in inv
-	void step(MOVE_DIR dir); // mon attempts to take a step in dir
+	bool step(MOVE_DIR dir); // mon attempts to take a step in dir
 	void rpos(double& rx, double& ry); // get rendering position
 	// construct with given id and position
 	Mon(MON_ID id, int x, int y):

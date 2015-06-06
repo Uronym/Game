@@ -38,8 +38,15 @@ void move_others() {
 	update_cmap();
 	for(unsigned i = 1; i < mons.size(); ++i) {
 		MOVE_DIR dir; // vector to step in
-		pathfind(dir, mons[i].x, mons[i].y, mons[0].x, mons[0].y, cmap, mapSize);
-		mons[i].step(dir);
+		bool s = pathfind(dir, mons[i].x, mons[i].y, mons[0].x, mons[0].y, cmap, mapSize);
+		if(s) mons[i].step(dir);
+	}
+}
+
+// an extremely awkward way to move the player...
+void move_plyr(MOVE_DIR dir) {
+	if(mons[0].step(dir)) {
+		move_others();
 	}
 }
 
@@ -108,8 +115,7 @@ int main(int argc, char **argv) {
 
 	// create some monsters for testing
 	mons.push_back(Mon(MON_SLIME, 3, 3));
-	mons.push_back(Mon(MON_SLIME, 4, 2));
-	mons.push_back(Mon(MON_SLIME, 5, 1));
+	mons.push_back(Mon(MON_SLIME, 7, 7));
 	// create some items for testing, too
 	items.push_back(Item(ITEM_POTION, 5, 5));
 	items.push_back(Item(ITEM_POTION, 4, 5));
@@ -129,13 +135,13 @@ int main(int argc, char **argv) {
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_Q)) {break;}
 		// player movement
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_UP)) {
-			mons[0].step(MOVE_UP); move_others();
+			move_plyr(MOVE_UP);
 		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)) {
-			mons[0].step(MOVE_DOWN); move_others();
+			move_plyr(MOVE_DOWN);
 		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)) {
-			mons[0].step(MOVE_LEFT); move_others();
+			move_plyr(MOVE_LEFT);
 		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT)) {
-			mons[0].step(MOVE_RIGHT); move_others();
+			move_plyr(MOVE_RIGHT);
 		}
 		// pick up items
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_G)) {

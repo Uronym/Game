@@ -30,10 +30,11 @@ void Mon::wield(int i) {
 }
 
 // mon attempts to take a step in dir
-void Mon::step(MOVE_DIR dir) {
+// returns success
+bool Mon::step(MOVE_DIR dir) {
 	// step must follow speed
 	double now = al_get_time();
-	if(now - ostep < 1.0 / spe) return;
+	if(now - ostep < 1.0 / spe) return false;
 	// step must not collide
 	int nx = x; int ny = y; // new position
 	switch(dir) {
@@ -45,25 +46,26 @@ void Mon::step(MOVE_DIR dir) {
 			--nx; break;
 		case MOVE_RIGHT:
 			++nx; break;
-		case MOVE_DIRS: // should probably error
-			return;
+		default:
+			return false;
 	}
-	if(nx < 0 || nx >= mapSize || ny < 0 || ny >= mapSize) return;
+	if(nx < 0 || nx >= mapSize || ny < 0 || ny >= mapSize) return false;
 	// step must not collide with map
-	if(map[nx + ny * mapSize] == 1) return;
+	if(map[nx + ny * mapSize] == 1) return false;
 	// if step collides with monster, attack
 	for(unsigned i = 0; i < mons.size(); ++i) {
 		if(mons[i].x == nx && mons[i].y == ny) {
 			mons[i].dmg(item == NULL ? 1 : item->dat->dmg);
 			ox = x; oy = y;
 			ostep = now;
-			return;
+			return true;
 		}
 	}
 	// passed all checks!
 	ox = x; oy = y;
 	ostep = now;
 	x = nx; y = ny;
+	return true;
 }
 
 // get rendering position
