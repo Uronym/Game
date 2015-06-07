@@ -36,42 +36,42 @@ bool Mon::step(MOVE_DIR dir) {
 	double now = al_get_time();
 	if(now - ostep < 1.0 / spe) return false;
 	// step must not collide
-	int nx = x; int ny = y; // new position
+	vec2 n(p); // new position
 	switch(dir) {
 		case MOVE_UP:
-			--ny; break;
+			--n.y; break;
 		case MOVE_DOWN:
-			++ny; break;
+			++n.y; break;
 		case MOVE_LEFT:
-			--nx; break;
+			--n.x; break;
 		case MOVE_RIGHT:
-			++nx; break;
+			++n.x; break;
 		default:
 			return false;
 	}
-	if(nx < 0 || nx >= mapSize || ny < 0 || ny >= mapSize) return false;
+	if(!n.onsq(mapSize)) return false;
 	// step must not collide with map
-	if(map[nx + ny * mapSize] == 1) return false;
+	if(map[n.x + n.y * mapSize] == 1) return false;
 	// if step collides with monster, attack
 	for(unsigned i = 0; i < mons.size(); ++i) {
-		if(mons[i].x == nx && mons[i].y == ny) {
+		if(mons[i].p == n) {
 			mons[i].dmg(item == NULL ? 1 : item->dat->dmg);
-			ox = x; oy = y;
+			o = p;
 			ostep = now;
 			return true;
 		}
 	}
 	// passed all checks!
-	ox = x; oy = y;
+	o = p;
 	ostep = now;
-	x = nx; y = ny;
+	p = n;
 	return true;
 }
 
 // get rendering position
 void Mon::rpos(double& rx, double& ry) {
 	double c = limit((al_get_time() - ostep) * spe, 0, 1);
-	rx = lerp(ox, x, c);
-	ry = lerp(oy, y, c);
+	rx = lerp(o.x, p.x, c);
+	ry = lerp(o.y, p.y, c);
 }
 

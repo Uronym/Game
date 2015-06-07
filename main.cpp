@@ -38,7 +38,7 @@ void move_others() {
 	update_cmap();
 	for(unsigned i = 1; i < mons.size(); ++i) {
 		MOVE_DIR dir; // vector to step in
-		bool s = pathfind(dir, vec2(mons[i].x, mons[i].y), vec2(mons[0].x, mons[0].y), cmap, mapSize);
+		bool s = pathfind(dir, mons[i].p, mons[0].p, cmap, mapSize);
 		if(s) mons[i].step(dir);
 	}
 }
@@ -114,11 +114,11 @@ int main(int argc, char **argv) {
 	loadMap("main");
 
 	// create some monsters for testing
-	mons.push_back(Mon(MON_SLIME, 3, 3));
-	mons.push_back(Mon(MON_SLIME, 7, 7));
+	mons.push_back(Mon(MON_SLIME, vec2(3, 3)));
+	mons.push_back(Mon(MON_SLIME, vec2(7, 7)));
 	// create some items for testing, too
-	items.push_back(Item(ITEM_POTION, 5, 5));
-	items.push_back(Item(ITEM_POTION, 4, 5));
+	items.push_back(Item(ITEM_POTION, vec2(5, 5)));
+	items.push_back(Item(ITEM_POTION, vec2(4, 5)));
 	
 	ALLEGRO_TIMEOUT timeout;
 
@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
 		// pick up items
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_G)) {
 			for(unsigned i = 0; i < items.size(); ++i) {
-				if(items[i].x == mons[0].x && items[i].y == mons[0].y) {
+				if(items[i].p == mons[0].p) {
 					mons[0].inv.push_back(items[i]);
 					items.erase(items.begin() + i);
 				}
@@ -162,8 +162,8 @@ int main(int argc, char **argv) {
 		mons[0].rpos(px, py);
 		al_clear_to_color(al_map_rgb(63, 47, 31)); // clear to a soft brown
 		//render map
-		for(int x = mons[0].x - 6; x < mons[0].x + 7; ++x) {
-			for(int y = mons[0].y - 5; y < mons[0].y + 6; ++y) {
+		for(int x = mons[0].p.x - 6; x < mons[0].p.x + 7; ++x) {
+			for(int y = mons[0].p.y - 5; y < mons[0].p.y + 6; ++y) {
 				if(x < 0) continue;
 				if(y < 0) continue;
 				double rx = TILE_SIZE * (5 + x - px);
@@ -173,8 +173,8 @@ int main(int argc, char **argv) {
 		}
 		// render items
 		for(unsigned i = 0; i < items.size(); ++i) {
-			double rx = TILE_SIZE * (5 + items[i].x - px);
-			double ry = TILE_SIZE * (4 + items[i].y - py);
+			double rx = TILE_SIZE * (5 + items[i].p.x - px);
+			double ry = TILE_SIZE * (4 + items[i].p.y - py);
 			al_draw_bitmap(sprites[1], rx, ry, 0);
 		}
 		// render monsters
