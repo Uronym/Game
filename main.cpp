@@ -38,7 +38,7 @@ void move_others() {
 	update_cmap();
 	for(unsigned i = 1; i < mons.size(); ++i) {
 		MOVE_DIR dir; // vector to step in
-		bool s = pathfind(dir, mons[i].x, mons[i].y, mons[0].x, mons[0].y, cmap, mapSize);
+		bool s = pathfind(dir, vec2(mons[i].x, mons[i].y), vec2(mons[0].x, mons[0].y), cmap, mapSize);
 		if(s) mons[i].step(dir);
 	}
 }

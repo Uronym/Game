@@ -4,20 +4,16 @@
 #include<stack>
 #include<vector>
 #include"astar.h"
+#include"vec2.h"
 
-double dist(double x1, double y1, double x2, double y2) {
-	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
-}
-
-struct Node {
-	int x; int y; // coordinates
-	int gd; // distance to goal
-	Node(int x, int y, int gx, int gy): x(x), y(y), gd(dist(x, y, gx, gy)) {}
+struct Node { // a pathfinding node (for A*)
+	vec2 p; // coordinates
+	double gd; // distance to goal
+	Node(const vec2& p, const vec2& g): p(p), gd(p.dist(g)) {}
 	bool operator<(const Node& n) const {return gd > n.gd;}
 };
 
-bool pathfind(MOVE_DIR& dir, int sx, int sy, int gx, int gy,
-				bool** cmap, int msize) {
+bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool** cmap, int msize) {
 	bool found = false;
 	// allocate closed
 	bool** closed;
@@ -29,17 +25,17 @@ bool pathfind(MOVE_DIR& dir, int sx, int sy, int gx, int gy,
 	for(int x = 0; x < msize; ++x) parent[x] = new MOVE_DIR[msize];
 	// start by making a node at the start
 	std::priority_queue<Node, std::vector<Node>> open;
-	open.push(Node(sx, sy, gx, gy));
+	open.push(Node(s, g));
 	// expand the nearest node until goal is
 	// reached or no more open nodes exist
 	do {
 		Node node = open.top(); open.pop();
-		if(node.x == gx && node.y == gy) { // found goal; trace path
+		if(node.p.x == g.x && node.p.y == g.y) { // found goal; trace path
 			std::stack<MOVE_DIR> path;
-			vec2 p(node.x, node.y);
-			while(p.x != sx || p.y != sy) {
+			vec2 p(node.p);
+			while(p.x != s.x || p.y != s.y) {
 				path.push(parent[p.x][p.y]);
-				p = p - MOVE_VEC[parent[p.x][p.y]];
+				p = p + MOVE_VEC[parent[p.x][p.y]];
 			}
 			if(!path.empty()) {
 				found = true;
@@ -60,11 +56,11 @@ bool pathfind(MOVE_DIR& dir, int sx, int sy, int gx, int gy,
 			break;
 		} else { // expand node to adjacent tiles
 			for(int i = 0; i < MOVE_DIRS; ++i) {
-				vec2 d = vec2(node.x - MOVE_VEC[i].x, node.y - MOVE_VEC[i].y);
+				vec2 d = vec2(node.p - MOVE_VEC[i]);
 				if(d.onsq(msize) && !closed[d.x][d.y]) {
 					closed[d.x][d.y] = true;
 					parent[d.x][d.y] = (MOVE_DIR)i;
-					open.push(Node(d.x, d.y, gx, gy));
+					open.push(Node(d, g));
 				}
 			}
 		}
