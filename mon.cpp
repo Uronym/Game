@@ -15,8 +15,14 @@ mon_dat mon_data[MON_IDS] = {
 
 std::vector<Mon> mons;
 
+void Mon::die() {
+	for(unsigned i = 0; i < mons.size(); ++i)
+		if(this == &mons[i]) {mons.erase(mons.begin() + i); break;}
+}
+
 void Mon::dmg(int dp) {
 	hp = limit(hp - dp, 0, hp_max);
+	if(hp == 0) die();
 }
 
 void Mon::wield(int i) {

@@ -98,8 +98,8 @@ int main(int argc, char **argv) {
 	loadMap("main");
 
 	// create some monsters for testing
-	mons.push_back(Mon(MON_SLIME, vec2(3, 3)));
-	mons.push_back(Mon(MON_SLIME, vec2(7, 7)));
+	Mon(MON_SLIME, vec2(3, 3));
+	Mon(MON_SLIME, vec2(7, 7));
 	// create some items for testing, too
 	items.push_back(Item(ITEM_POTION, vec2(5, 5)));
 	items.push_back(Item(ITEM_POTION, vec2(4, 5)));
