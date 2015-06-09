@@ -5,8 +5,6 @@
 #include<allegro5/allegro_primitives.h>
 #include <string>
 #include <vector>
-#include <fstream>
-#include <cmath>
 #include"astar.h"
 #include"game.h"
 #include"item.h"
@@ -19,23 +17,9 @@ const int TILE_SIZE = 64; // size of tiles in pixels
 const int SCREEN_W = TILE_SIZE * 11;
 const int SCREEN_H = TILE_SIZE * 9;
 
-bool** cmap;
-
-void update_cmap() {
-	delete[] cmap;
-	cmap = new bool*[mapSize];
-	for(int x = 0; x < mapSize; ++x) cmap[x] = new bool[mapSize];
-	for(int x = 0; x < mapSize; ++x) {
-		for(int y = 0; y < mapSize; ++y) {
-			cmap[x][y] = map[x + y * mapSize] == 1;
-		}
-	}
-}
-
 // an extremely awkward way to move the other monsters!
 // (assumes player is mons[0], among other things)
 void move_others() {
-	update_cmap();
 	for(unsigned i = 1; i < mons.size(); ++i) {
 		MOVE_DIR dir; // vector to step in
 		bool s = pathfind(dir, mons[i].p, mons[0].p, cmap, mapSize);
@@ -204,21 +188,3 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-void loadMap(std::string name)
-{
-	ifstream in;
-	in.open("Maps/" + name + ".map",ios::in|ios::binary);
-	if(in.is_open())
-	{
-		in.seekg(0, in.end);
-		int length = in.tellg();
-		in.seekg(0, in.beg);
-		mapSize = sqrt((double)length/2.0);
-		if(map!=nullptr)
-			delete [] map;
-		map = new short[mapSize*mapSize];
-		in.read((char *)map,length);
-		currentMap = name;
-		in.close();
-	}
-}

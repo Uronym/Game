@@ -11,6 +11,7 @@ extern ALLEGRO_BITMAP** tiles;
 extern short* map;
 extern int mapSize;
 extern std::string currentMap;
+extern bool** cmap;
 
 void loadMap(std::string name);
 
