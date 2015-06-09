@@ -4,6 +4,7 @@
 #include<stack>
 #include<vector>
 #include"astar.h"
+#include"game.h"
 #include"vec2.h"
 
 struct Node { // a pathfinding node (for A*)
@@ -57,7 +58,7 @@ bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool** cmap, int msize) {
 		} else { // expand node to adjacent tiles
 			for(int i = 0; i < MOVE_DIRS; ++i) {
 				vec2 d = vec2(node.p - MOVE_VEC[i]);
-				if(d.onsq(msize) && !closed[d.x][d.y]) {
+				if(d.onsq(msize) && !closed[d.x][d.y] && !cmap[d.x][d.y]) {
 					closed[d.x][d.y] = true;
 					parent[d.x][d.y] = (MOVE_DIR)i;
 					open.push(Node(d, g));

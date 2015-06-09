@@ -18,7 +18,8 @@ void update_cmap() {
 	for(int x = 0; x < mapSize; ++x) cmap[x] = new bool[mapSize];
 	for(int x = 0; x < mapSize; ++x) {
 		for(int y = 0; y < mapSize; ++y) {
-			cmap[x][y] = map[x + y * mapSize] == 1;
+			short tile = map[x + y * mapSize];
+			cmap[x][y] = tile == 1 || tile == 4 || tile == 5;
 		}
 	}
 }
