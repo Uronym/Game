@@ -1,5 +1,7 @@
 
 #include<allegro5/allegro.h>
+#include<allegro5/allegro_audio.h>
+#include<allegro5/allegro_acodec.h>
 #include<allegro5/allegro_image.h>
 #include<allegro5/allegro_primitives.h>
 #include<cstdlib>
@@ -94,6 +96,16 @@ int main(int argc, char **argv) {
 	al_init_primitives_addon();
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_set_window_title(display, "Game");
+	// music
+	al_install_audio();
+	al_init_acodec_addon();
+	al_restore_default_mixer();
+	ALLEGRO_SAMPLE* music = al_load_sample("maze.ogg");
+	ALLEGRO_SAMPLE_INSTANCE* music_inst = NULL;
+	music_inst = al_create_sample_instance(music);
+	al_set_sample_instance_playmode(music_inst, ALLEGRO_PLAYMODE_LOOP);
+	al_attach_sample_instance_to_mixer(music_inst, al_get_default_mixer());
+	al_play_sample_instance(music_inst);
 	// colors probably should go in another file
 	const ALLEGRO_COLOR COLOR_RED = al_map_rgb(255, 0, 0);
 	const ALLEGRO_COLOR COLOR_GREEN = al_map_rgb(0, 255, 0);
