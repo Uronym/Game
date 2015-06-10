@@ -1,10 +1,11 @@
 
-#include <stdio.h>
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_image.h>
+#include<allegro5/allegro.h>
+#include<allegro5/allegro_image.h>
 #include<allegro5/allegro_primitives.h>
-#include <string>
-#include <vector>
+#include<cstdlib>
+#include<cstdio>
+#include<string>
+#include<vector>
 #include"astar.h"
 #include"game.h"
 #include"item.h"
@@ -35,6 +36,8 @@ void move_plyr(MOVE_DIR dir) {
 }
 
 int main(int argc, char **argv) {
+	srand(time(NULL));
+	
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_KEYBOARD_STATE keyboard_state;

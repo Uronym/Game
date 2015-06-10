@@ -7,9 +7,11 @@ struct vec2 {
 	int x; int y;
 	vec2() {}
 	vec2(int x, int y): x(x), y(y) {}
+	vec2 operator-() const {return vec2(-x, -y);}
 	vec2 operator-(const vec2& v) const {return vec2(x - v.x, y - v.y);}
 	vec2 operator+(const vec2& v) const {return vec2(x + v.x, y + v.y);}
 	bool operator==(const vec2& v) const {return x == v.x && y == v.y;}
+	bool operator!=(const vec2& v) const {return x != v.x || y != v.y;}
 	// is point within a square of size s? (useful for map bounds checking)
 	bool onsq(int s) const {return x >= 0 && x < s && y >= 0 && y < s;}
 	double dist(const vec2& p) const {
