@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
 	const ALLEGRO_COLOR COLOR_RED = al_map_rgb(255, 0, 0);
 	const ALLEGRO_COLOR COLOR_GREEN = al_map_rgb(0, 255, 0);
 	
-	loadMap("main");
+	load_maze();
 
 	// create some monsters for testing
 	Mon(MON_SLIME, vec2(3, 3));
@@ -141,15 +141,15 @@ int main(int argc, char **argv) {
 		// unwield items
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_U)) mons[0].wield(-1);
 		// rendering
+		al_clear_to_color(al_map_rgb(0, 0, 0));
 		// "camera" position
 		double px; double py;
 		mons[0].rpos(px, py);
-		al_clear_to_color(al_map_rgb(63, 47, 31)); // clear to a soft brown
 		//render map
 		for(int x = mons[0].p.x - 6; x < mons[0].p.x + 7; ++x) {
 			for(int y = mons[0].p.y - 5; y < mons[0].p.y + 6; ++y) {
-				if(x < 0) continue;
-				if(y < 0) continue;
+				if(x < 0 || x >= mapSize) continue;
+				if(y < 0 || y >= mapSize) continue;
 				double rx = TILE_SIZE * (5 + x - px);
 				double ry = TILE_SIZE * (4 + y - py);
 				al_draw_bitmap(tiles[map[x + y * mapSize]], rx, ry, 0);

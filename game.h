@@ -13,6 +13,7 @@ extern int mapSize;
 extern std::string currentMap;
 extern bool** cmap;
 
+void load_maze();
 void loadMap(std::string name);
 
 #endif

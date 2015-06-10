@@ -24,6 +24,14 @@ void update_cmap() {
 	}
 }
 
+void load_maze() {
+	mapSize = 17;
+	currentMap = "maze";
+	if(map != NULL) delete[] map;
+	map = new short[mapSize * mapSize]();
+	update_cmap();
+}
+
 void loadMap(std::string name) {
 	std::ifstream in;
 	in.open("Maps/" + name + ".map", std::ios::in | std::ios::binary);
