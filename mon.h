@@ -36,6 +36,7 @@ struct Mon { // an individual monster
 	int hp_max, mp_max, hp, mp; double spe;
 	Item* item; // currently wielded item
 	std::vector<Item> inv; // inventory
+	void use(Item& item); // use item
 	void die(); // die (kill?)
 	void dmg(int dp); // cause hp damage
 	bool step(MOVE_DIR dir); // mon attempts to take a step in dir

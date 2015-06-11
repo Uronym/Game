@@ -41,10 +41,10 @@ void render() { // <-- exactly what it says
 		al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + TILE_SIZE / 8, COLOR_RED);
 		al_draw_filled_rectangle(rx, ry, rx + hp_pc * TILE_SIZE, ry + TILE_SIZE / 8, COLOR_GREEN);
 		if(mons[i].item != NULL) // wielded item (if it exists)
-			al_draw_bitmap(sprites[1], TILE_SIZE * 5, TILE_SIZE * 4, 0);
+			al_draw_bitmap(sprites[mons[i].item->dat->tile], TILE_SIZE * 5, TILE_SIZE * 4, 0);
 	}
 	for(unsigned i = 0; i < mons[0].inv.size(); ++i) // render inventory
-		al_draw_bitmap(sprites[1], TILE_SIZE * i, TILE_SIZE * 8, 0);
+		al_draw_bitmap(sprites[mons[0].inv[i].dat->tile], TILE_SIZE * i, TILE_SIZE * 8, 0);
 	al_flip_display(); // puts to screen
 }
 

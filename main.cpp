@@ -118,8 +118,8 @@ int main(int argc, char **argv) {
 	Mon(MON_HUMAN, vec2(5, 5));
 	Mon(MON_SLIME, vec2(8, 7));
 	// create some items for testing, too
-	items.push_back(Item(ITEM_POTION, vec2(5, 5)));
-	items.push_back(Item(ITEM_POTION, vec2(4, 5)));
+	Item(ITEM_POTION, vec2(5, 5));
+	Item(ITEM_POTION, vec2(4, 5));
 	
 	ALLEGRO_TIMEOUT timeout;
 
@@ -155,12 +155,12 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
-		// wield items
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_I))
-			mons[0].item = &mons[0].inv[0];
-		// unwield items
+		// use items
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_U))
-			mons[0].item = NULL;
+			mons[0].use(mons[0].inv[0]);
+		// wield/unwield items
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_I))
+			mons[0].item = mons[0].item == NULL ? &mons[0].inv[0] : NULL;
 		render();
 	}
 	return 0;

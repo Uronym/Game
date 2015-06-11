@@ -1,5 +1,6 @@
 
 #include<allegro5/allegro.h>
+#include<utility>
 #include<vector>
 #include"game.h"
 #include"mon.h"
@@ -8,7 +9,6 @@
 double limit(double n, double mn, double mx) {return n < mn ? mn : n > mx ? mx : n;}
 double lerp(double a, double b, double c) {return a * (1 - c) + b * c;}
 
-// data about all monster types
 mon_dat mon_data[MON_IDS] = {
 	//       name  tile hp  mp  spe
 	mon_dat("human", 4, 10, 10, 10),
@@ -25,6 +25,25 @@ void Mon::die() {
 void Mon::dmg(int dp) {
 	hp = limit(hp - dp, 0, hp_max);
 	if(hp == 0) die();
+}
+
+void Mon::use(Item& it) {
+	for(unsigned i = 0; i < inv.size(); ++i) {
+		if(&it == &inv[i]) {
+			std::swap(inv[i], inv.back());
+			inv.pop_back();
+			if(&it == item) item = NULL;
+			break;
+		}
+	}
+	switch(it.id) {
+		case ITEM_POTION:
+			dmg(-10);
+			break;
+		default:
+			assert(false);
+			break;
+	}
 }
 
 // mon attempts to take a step in dir
