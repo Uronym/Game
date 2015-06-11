@@ -35,6 +35,13 @@ void move_plyr(MOVE_DIR dir) {
 	if(mons[0].step(dir)) {
 		move_others();
 	}
+	if(map[mons[0].p.x + mons[0].p.y * mapSize] == 2) {
+		if(currentMap == "maze") {
+			loadMap("main");
+		} else {
+			load_maze();
+		}
+	}
 }
 
 int main(int argc, char **argv) {
@@ -110,7 +117,7 @@ int main(int argc, char **argv) {
 	const ALLEGRO_COLOR COLOR_RED = al_map_rgb(255, 0, 0);
 	const ALLEGRO_COLOR COLOR_GREEN = al_map_rgb(0, 255, 0);
 	
-	load_maze();
+	loadMap("main");//load_maze();
 
 	// create some monsters for testing
 	Mon(MON_SLIME, vec2(3, 3));

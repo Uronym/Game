@@ -84,6 +84,7 @@ void load_maze() {
 			map[mx + (my + 1) * mapSize] = nodes[x][y].down ? 0 : 1;
 		}
 	}
+	map[mapSize - 2] = 2; // exit
 	// delete nodes
 	for(int x = 0; x < msize; ++x) delete[] nodes[x];
 	delete[] nodes;
