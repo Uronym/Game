@@ -10,6 +10,7 @@ struct mon_dat;
 struct Mon;
 
 enum MON_ID { // indices for mon_data
+	MON_HUMAN,
 	MON_SLIME,
 	MON_IDS, // number of MON_IDs
 };
@@ -18,10 +19,12 @@ extern mon_dat mon_data[MON_IDS]; // data about all monster types
 extern std::vector<Mon> mons; // vector of all monsters
 
 struct mon_dat { // data structure of mon_data
-	std::string name;
+	std::string name; int tile;
 	int hp_base, mp_base; double spe_base;
-	mon_dat(std::string name, int hp_base, int mp_base, double spe_base):
-		name(name), hp_base(hp_base), mp_base(mp_base), spe_base(spe_base) {}
+	mon_dat(std::string name, int tile,
+			int hp_base, int mp_base, double spe_base):
+		name(name), tile(tile),
+		hp_base(hp_base), mp_base(mp_base), spe_base(spe_base) {}
 };
 
 struct Mon { // an individual monster

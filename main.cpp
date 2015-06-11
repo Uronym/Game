@@ -12,11 +12,11 @@
 #include"game.h"
 #include"item.h"
 #include"mon.h"
+#include"render.h"
 #include"vec2.h"
 
 using namespace std;
 
-const int TILE_SIZE = 64; // size of tiles in pixels
 const int SCREEN_W = TILE_SIZE * 11;
 const int SCREEN_H = TILE_SIZE * 9;
 
@@ -111,20 +111,19 @@ int main(int argc, char **argv) {
 	al_set_sample_instance_playmode(music_inst, ALLEGRO_PLAYMODE_LOOP);
 	al_attach_sample_instance_to_mixer(music_inst, al_get_default_mixer());
 	al_play_sample_instance(music_inst);
-	// colors probably should go in another file
-	const ALLEGRO_COLOR COLOR_RED = al_map_rgb(255, 0, 0);
-	const ALLEGRO_COLOR COLOR_GREEN = al_map_rgb(0, 255, 0);
 	
 	loadMap("main");
 
 	// create some monsters for testing
-	Mon(MON_SLIME, vec2(5, 5));
+	Mon(MON_HUMAN, vec2(5, 5));
 	Mon(MON_SLIME, vec2(8, 7));
 	// create some items for testing, too
 	items.push_back(Item(ITEM_POTION, vec2(5, 5)));
 	items.push_back(Item(ITEM_POTION, vec2(4, 5)));
 	
 	ALLEGRO_TIMEOUT timeout;
+
+	init_colors();
 
 	while(true) { // main loop
 		// listen for events from allegro **BEFORE** rendering
@@ -162,51 +161,8 @@ int main(int argc, char **argv) {
 		// unwield items
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_U))
 			mons[0].item = NULL;
-		// rendering
-		al_clear_to_color(al_map_rgb(0, 0, 0));
-		// "camera" position
-		double px; double py;
-		mons[0].rpos(px, py);
-		//render map
-		for(int x = mons[0].p.x - 6; x < mons[0].p.x + 7; ++x) {
-			for(int y = mons[0].p.y - 5; y < mons[0].p.y + 6; ++y) {
-				if(x < 0 || x >= mapSize) continue;
-				if(y < 0 || y >= mapSize) continue;
-				double rx = TILE_SIZE * (5 + x - px);
-				double ry = TILE_SIZE * (4 + y - py);
-				al_draw_bitmap(tiles[map[x + y * mapSize]], rx, ry, 0);
-			}
-		}
-		// render items
-		for(unsigned i = 0; i < items.size(); ++i) {
-			double rx = TILE_SIZE * (5 + items[i].p.x - px);
-			double ry = TILE_SIZE * (4 + items[i].p.y - py);
-			al_draw_bitmap(sprites[1], rx, ry, 0);
-		}
-		// render monsters
-		for(unsigned i = 0; i < mons.size(); ++i) {
-			double ix; double iy;
-			mons[i].rpos(ix, iy);
-			double rx = TILE_SIZE * (5 + ix - px);
-			double ry = TILE_SIZE * (4 + iy - py);
-			al_draw_bitmap(sprites[0], rx, ry, 0);
-			// and a health bar for each!
-			double hp_pc = mons[i].hp / (double)mons[i].hp_max;
-			al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + TILE_SIZE / 8, COLOR_RED);
-			al_draw_filled_rectangle(rx, ry, rx + hp_pc * TILE_SIZE, ry + TILE_SIZE / 8, COLOR_GREEN);
-		}
-		// render wielded item
-		if(mons[0].item != NULL) {
-			al_draw_bitmap(sprites[1], TILE_SIZE * 5, TILE_SIZE * 4, 0);
-		}
-		// render inventory
-		for(unsigned i = 0; i < mons[0].inv.size(); ++i) {
-			al_draw_bitmap(sprites[1], TILE_SIZE * i, TILE_SIZE * 8, 0);
-		}
-		// finish rendering
-		al_flip_display();
+		render();
 	}
-	
 	return 0;
 }
 

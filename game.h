@@ -4,7 +4,8 @@
 #include<allegro5/allegro.h>
 #include<string>
 
-const int NUM_SPRITES = 4;
+const int TILE_SIZE = 64; // size of tiles in pixels
+const int NUM_SPRITES = 5;
 const int NUM_TILES = 6;
 extern ALLEGRO_BITMAP** sprites;
 extern ALLEGRO_BITMAP** tiles;

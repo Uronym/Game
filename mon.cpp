@@ -10,7 +10,9 @@ double lerp(double a, double b, double c) {return a * (1 - c) + b * c;}
 
 // data about all monster types
 mon_dat mon_data[MON_IDS] = {
-	mon_dat("slime", 10, 10, 4),
+	//       name  tile hp  mp  spe
+	mon_dat("human", 4, 10, 10, 10),
+	mon_dat("slime", 0, 10, 10, 2.5),
 };
 
 std::vector<Mon> mons;
