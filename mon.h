@@ -19,9 +19,7 @@ extern std::vector<Mon> mons; // vector of all monsters
 
 struct mon_dat { // data structure of mon_data
 	std::string name;
-	int hp_base;
-	int mp_base;
-	double spe_base;
+	int hp_base, mp_base; double spe_base;
 	mon_dat(std::string name, int hp_base, int mp_base, double spe_base):
 		name(name), hp_base(hp_base), mp_base(mp_base), spe_base(spe_base) {}
 };
@@ -32,12 +30,11 @@ struct Mon { // an individual monster
 	vec2 p; // position
 	vec2 o; // old step position
 	double ostep; // old step time
-	int hp_max; int mp_max; int hp; int mp; double spe;
+	int hp_max, mp_max, hp, mp; double spe;
 	Item* item; // currently wielded item
 	std::vector<Item> inv; // inventory
 	void die(); // die (kill?)
 	void dmg(int dp); // cause hp damage
-	void wield(int i); // wield item at i in inv
 	bool step(MOVE_DIR dir); // mon attempts to take a step in dir
 	void rpos(double& rx, double& ry); // get rendering position
 	// construct with given id and position

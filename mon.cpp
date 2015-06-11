@@ -25,16 +25,6 @@ void Mon::dmg(int dp) {
 	if(hp == 0) die();
 }
 
-void Mon::wield(int i) {
-	if(item != NULL) inv.push_back(*item);
-	if(i < 0 || i >= inv.size()) {
-		item = NULL;
-	} else {
-		item = &inv[i];
-		inv.erase(inv.begin() + i);
-	}
-}
-
 // mon attempts to take a step in dir
 // returns success
 bool Mon::step(MOVE_DIR dir) {

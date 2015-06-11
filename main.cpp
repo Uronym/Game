@@ -30,11 +30,9 @@ void move_others() {
 	}
 }
 
-// an extremely awkward way to move the player...
+// this is a really bad placeholder for a speed system
 void move_plyr(MOVE_DIR dir) {
-	if(mons[0].step(dir)) {
-		move_others();
-	}
+	if(mons[0].step(dir)) move_others();
 	if(map[mons[0].p.x + mons[0].p.y * mapSize] == 2) {
 		if(currentMap == "maze") {
 			loadMap("main");
@@ -120,8 +118,8 @@ int main(int argc, char **argv) {
 	loadMap("main");
 
 	// create some monsters for testing
-	Mon(MON_SLIME, vec2(3, 3));
-	Mon(MON_SLIME, vec2(7, 7));
+	Mon(MON_SLIME, vec2(5, 5));
+	Mon(MON_SLIME, vec2(8, 7));
 	// create some items for testing, too
 	items.push_back(Item(ITEM_POTION, vec2(5, 5)));
 	items.push_back(Item(ITEM_POTION, vec2(4, 5)));
@@ -159,9 +157,11 @@ int main(int argc, char **argv) {
 			}
 		}
 		// wield items
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_I)) mons[0].wield(0);
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_I))
+			mons[0].item = &mons[0].inv[0];
 		// unwield items
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_U)) mons[0].wield(-1);
+		if(al_key_down(&keyboard_state, ALLEGRO_KEY_U))
+			mons[0].item = NULL;
 		// rendering
 		al_clear_to_color(al_map_rgb(0, 0, 0));
 		// "camera" position
