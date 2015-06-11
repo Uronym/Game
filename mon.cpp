@@ -57,7 +57,7 @@ bool Mon::step(MOVE_DIR dir) {
 	}
 	if(!n.onsq(mapSize)) return false;
 	// step must not collide with map
-	if(cmap[n.x][n.y]) return false;
+	if(col[map[n.x + n.y * mapSize]]) return false;
 	// if step collides with monster, attack
 	for(unsigned i = 0; i < mons.size(); ++i) {
 		if(mons[i].p == n) {

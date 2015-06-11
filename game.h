@@ -11,7 +11,7 @@ extern ALLEGRO_BITMAP** tiles;
 extern short* map;
 extern int mapSize;
 extern std::string currentMap;
-extern bool** cmap;
+extern bool col[NUM_TILES]; // collision value for each tile
 
 void load_maze();
 void loadMap(std::string name);

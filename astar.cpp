@@ -14,16 +14,16 @@ struct Node { // a pathfinding node (for A*)
 	bool operator<(const Node& n) const {return gd > n.gd;}
 };
 
-bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool** cmap, int msize) {
+bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g) {
 	bool found = false;
 	// allocate closed
 	bool** closed;
-	closed = new bool*[msize];
-	for(int x = 0; x < msize; ++x) closed[x] = new bool[msize]();
+	closed = new bool*[mapSize];
+	for(int x = 0; x < mapSize; ++x) closed[x] = new bool[mapSize]();
 	// allocate parent
 	MOVE_DIR** parent;
-	parent = new MOVE_DIR*[msize];
-	for(int x = 0; x < msize; ++x) parent[x] = new MOVE_DIR[msize];
+	parent = new MOVE_DIR*[mapSize];
+	for(int x = 0; x < mapSize; ++x) parent[x] = new MOVE_DIR[mapSize];
 	// start by making a node at the start
 	std::priority_queue<Node, std::vector<Node>> open;
 	open.push(Node(s, g));
@@ -58,7 +58,7 @@ bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool** cmap, int msize) {
 		} else { // expand node to adjacent tiles
 			for(int i = 0; i < MOVE_DIRS; ++i) {
 				vec2 d = vec2(node.p - MOVE_VEC[i]);
-				if(d.onsq(msize) && !closed[d.x][d.y] && !cmap[d.x][d.y]) {
+				if(d.onsq(mapSize) && !closed[d.x][d.y] && !col[map[d.x + d.y * mapSize]]) {
 					closed[d.x][d.y] = true;
 					parent[d.x][d.y] = (MOVE_DIR)i;
 					open.push(Node(d, g));
@@ -67,10 +67,10 @@ bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool** cmap, int msize) {
 		}
 	} while(!open.empty());
 	// delete closed
-	for(int x = 0; x < msize; ++x) delete[] closed[x];
+	for(int x = 0; x < mapSize; ++x) delete[] closed[x];
 	delete[] closed;
 	// delete parent
-	for(int x = 0; x < msize; ++x) delete[] parent[x];
+	for(int x = 0; x < mapSize; ++x) delete[] parent[x];
 	delete[] parent;
 	return found;
 }

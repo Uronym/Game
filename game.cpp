@@ -13,7 +13,8 @@ ALLEGRO_BITMAP** tiles;
 short* map = nullptr;
 int mapSize = 0;
 std::string currentMap;
-bool** cmap = NULL;
+
+bool col[NUM_TILES] = {false, true, false, false, true, true};
 
 struct maze_node { // a node in the maze generation algorithm
 	bool closed; // closed
@@ -21,18 +22,6 @@ struct maze_node { // a node in the maze generation algorithm
 	vec2 parent; // parent position
 	maze_node(): closed(), right(), down() {}
 };
-
-void update_cmap() {
-	delete[] cmap;
-	cmap = new bool*[mapSize];
-	for(int x = 0; x < mapSize; ++x) cmap[x] = new bool[mapSize];
-	for(int x = 0; x < mapSize; ++x) {
-		for(int y = 0; y < mapSize; ++y) {
-			short tile = map[x + y * mapSize];
-			cmap[x][y] = tile == 1 || tile == 4 || tile == 5;
-		}
-	}
-}
 
 void load_maze() {
 	int msize = 8; // size of map
@@ -88,7 +77,6 @@ void load_maze() {
 	// delete nodes
 	for(int x = 0; x < msize; ++x) delete[] nodes[x];
 	delete[] nodes;
-	update_cmap(); // update collision map
 }
 
 void loadMap(std::string name) {
@@ -105,6 +93,5 @@ void loadMap(std::string name) {
 		currentMap = name;
 		in.close();
 	}
-	update_cmap();
 }
 

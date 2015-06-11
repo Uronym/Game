@@ -25,7 +25,7 @@ const int SCREEN_H = TILE_SIZE * 9;
 void move_others() {
 	for(unsigned i = 1; i < mons.size(); ++i) {
 		MOVE_DIR dir; // vector to step in
-		bool s = pathfind(dir, mons[i].p, mons[0].p, cmap, mapSize);
+		bool s = pathfind(dir, mons[i].p, mons[0].p);
 		if(s) mons[i].step(dir);
 	}
 }
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
 	const ALLEGRO_COLOR COLOR_RED = al_map_rgb(255, 0, 0);
 	const ALLEGRO_COLOR COLOR_GREEN = al_map_rgb(0, 255, 0);
 	
-	loadMap("main");//load_maze();
+	loadMap("main");
 
 	// create some monsters for testing
 	Mon(MON_SLIME, vec2(3, 3));
