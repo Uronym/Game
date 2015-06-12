@@ -11,8 +11,8 @@ double lerp(double a, double b, double c) {return a * (1 - c) + b * c;}
 
 mon_dat mon_data[MON_IDS] = {
 	//       name  tile hp  mp  spe
-	mon_dat("human", 4, 10, 10, 10),
-	mon_dat("slime", 0, 10, 10, 2.5),
+	mon_dat("human", 4, 10, 10, 1.00),
+	mon_dat("slime", 0, 10, 10, 0.25),
 };
 
 std::vector<Mon> mons;
@@ -49,9 +49,6 @@ void Mon::use(Item& it) {
 // mon attempts to take a step in dir
 // returns success
 bool Mon::step(MOVE_DIR dir) {
-	// step must follow speed
-	double now = al_get_time();
-	if(now - ostep < 1.0 / spe) return false;
 	// step must not collide
 	vec2 n(p); // new position
 	switch(dir) {
@@ -74,20 +71,23 @@ bool Mon::step(MOVE_DIR dir) {
 		if(mons[i].p == n) {
 			mons[i].dmg(item == NULL ? 1 : item->dat->dmg);
 			o = p;
-			ostep = now;
 			return true;
 		}
 	}
 	// passed all checks!
 	o = p;
-	ostep = now;
 	p = n;
+	last_step = al_get_time();
+	if(map[p.x + p.y * mapSize] == 2) {
+		if(currentMap == "main") load_maze();
+		else loadMap("main");
+	}
 	return true;
 }
 
 // get rendering position
 void Mon::rpos(double& rx, double& ry) {
-	double c = limit((al_get_time() - ostep) * spe, 0, 1);
+	double c = limit((al_get_time() - last_step) * 4, 0, 1);
 	rx = lerp(o.x, p.x, c);
 	ry = lerp(o.y, p.y, c);
 }

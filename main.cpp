@@ -13,34 +13,13 @@
 #include"item.h"
 #include"mon.h"
 #include"render.h"
+#include"turn.h"
 #include"vec2.h"
 
 using namespace std;
 
 const int SCREEN_W = TILE_SIZE * 11;
 const int SCREEN_H = TILE_SIZE * 9;
-
-// an extremely awkward way to move the other monsters!
-// (assumes player is mons[0], among other things)
-void move_others() {
-	for(unsigned i = 1; i < mons.size(); ++i) {
-		MOVE_DIR dir; // vector to step in
-		bool s = pathfind(dir, mons[i].p, mons[0].p);
-		if(s) mons[i].step(dir);
-	}
-}
-
-// this is a really bad placeholder for a speed system
-void move_plyr(MOVE_DIR dir) {
-	if(mons[0].step(dir)) move_others();
-	if(map[mons[0].p.x + mons[0].p.y * mapSize] == 2) {
-		if(currentMap == "maze") {
-			loadMap("main");
-		} else {
-			load_maze();
-		}
-	}
-}
 
 int main(int argc, char **argv) {
 	srand(time(NULL));
@@ -115,8 +94,8 @@ int main(int argc, char **argv) {
 	loadMap("main");
 
 	// create some monsters for testing
-	Mon(MON_HUMAN, vec2(5, 5));
-	Mon(MON_SLIME, vec2(8, 7));
+	Mon(MON_HUMAN, AI_PLYR, vec2(5, 5));
+	Mon(MON_SLIME, AI_MON, vec2(8, 7));
 	// create some items for testing, too
 	Item(ITEM_POTION, vec2(5, 5));
 	Item(ITEM_POTION, vec2(4, 5));
@@ -136,16 +115,6 @@ int main(int argc, char **argv) {
 		al_get_keyboard_state(&keyboard_state);
 		// too lazy to push close button? Good news!
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_Q)) {break;}
-		// player movement
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_UP)) {
-			move_plyr(MOVE_UP);
-		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)) {
-			move_plyr(MOVE_DOWN);
-		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)) {
-			move_plyr(MOVE_LEFT);
-		} if(al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT)) {
-			move_plyr(MOVE_RIGHT);
-		}
 		// pick up items
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_G)) {
 			for(unsigned i = 0; i < items.size(); ++i) {
@@ -161,6 +130,14 @@ int main(int argc, char **argv) {
 		// wield/unwield items
 		if(al_key_down(&keyboard_state, ALLEGRO_KEY_I))
 			mons[0].item = mons[0].item == NULL ? &mons[0].inv[0] : NULL;
+		if(al_get_time() - last_turn > 0.25
+			&& (al_key_down(&keyboard_state, ALLEGRO_KEY_UP)
+			|| al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)
+			|| al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)
+			|| al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT))) {
+			turn_step(keyboard_state);
+			last_turn = al_get_time();
+		}
 		render();
 	}
 	return 0;

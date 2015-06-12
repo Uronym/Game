@@ -13,6 +13,7 @@ ALLEGRO_BITMAP** tiles;
 short* map = nullptr;
 int mapSize = 0;
 std::string currentMap;
+double last_turn = 0;
 
 bool col[NUM_TILES] = {false, true, false, false, true, true};
 

@@ -13,6 +13,7 @@ extern short* map;
 extern int mapSize;
 extern std::string currentMap;
 extern bool col[NUM_TILES]; // collision value for each tile
+extern double last_turn; // time of last turn
 
 void load_maze();
 void loadMap(std::string name);
