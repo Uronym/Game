@@ -6,7 +6,7 @@ Yes, that's actually the name of the project, for now. A better name is a top pr
 
     Key | Effect
 -------:|:-------
- Arrows | Movement
+ Arrows | Move/attack
       G | Pick up item underfoot
       I | Wield first item in inventory
       Q | Quit/exit program
