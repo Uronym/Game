@@ -7,11 +7,13 @@
 #include"mon.h"
 #include"render.h"
 
-ALLEGRO_COLOR COLOR_RED, COLOR_GREEN;
+ALLEGRO_COLOR COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_BLUE;
 
 void init_colors() {
+	COLOR_BLACK = al_map_rgb(0, 0, 0);
 	COLOR_RED   = al_map_rgb(255, 0, 0);
 	COLOR_GREEN = al_map_rgb(0, 255, 0);
+	COLOR_BLUE  = al_map_rgb(0, 0, 255);
 }
 
 void render() { // <-- exactly what it says
@@ -40,6 +42,10 @@ void render() { // <-- exactly what it says
 		double hp_pc = mons[i].hp / (double)mons[i].hp_max;
 		al_draw_filled_rectangle(rx, ry, rx + TILE_SIZE, ry + TILE_SIZE / 8, COLOR_RED);
 		al_draw_filled_rectangle(rx, ry, rx + hp_pc * TILE_SIZE, ry + TILE_SIZE / 8, COLOR_GREEN);
+		// movement bar?
+		double mv_pc = mons[i].move_pts;
+		al_draw_filled_rectangle(rx, ry + TILE_SIZE / 8, rx + TILE_SIZE, ry + TILE_SIZE / 4, COLOR_BLACK);
+		al_draw_filled_rectangle(rx, ry + TILE_SIZE / 8, rx + mv_pc * TILE_SIZE, ry + TILE_SIZE / 4, COLOR_BLUE);
 		if(mons[i].item != NULL) // wielded item (if it exists)
 			al_draw_bitmap(sprites[mons[i].item->dat->tile], TILE_SIZE * 5, TILE_SIZE * 4, 0);
 	}
