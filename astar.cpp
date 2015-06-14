@@ -14,7 +14,7 @@ struct Node { // a pathfinding node (for A*)
 	bool operator<(const Node& n) const {return gd > n.gd;}
 };
 
-bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool walls) {
+bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool solid) {
 	bool found = false;
 	// allocate closed
 	bool** closed;
@@ -59,7 +59,7 @@ bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool walls) {
 			for(int i = 0; i < MOVE_DIRS; ++i) {
 				vec2 d = vec2(node.p - MOVE_VEC[i]);
 				if(d.onsq(mapSize) && !closed[d.x][d.y]
-				   && !(walls && col[map[d.x + d.y * mapSize]])) {
+				   && !(solid && col[map[d.x + d.y * mapSize]])) {
 					closed[d.x][d.y] = true;
 					parent[d.x][d.y] = (MOVE_DIR)i;
 					open.push(Node(d, g));

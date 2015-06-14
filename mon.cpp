@@ -10,7 +10,7 @@ double limit(double n, double mn, double mx) {return n < mn ? mn : n > mx ? mx :
 double lerp(double a, double b, double c) {return a * (1 - c) + b * c;}
 
 mon_dat mon_data[MON_IDS] = {
-	//       name  tile hp  mp  spe   walls
+	//       name  tile hp  mp  spe   solid
 	mon_dat("ghost", 3,  5, 10, 0.75, false),
 	mon_dat("human", 4, 10, 10, 1.00, true),
 	mon_dat("slime", 0,  3, 10, 0.25, true),
@@ -65,7 +65,7 @@ bool Mon::step(MOVE_DIR dir) {
 	}
 	if(!n.onsq(mapSize)) return false; // must be on map
 	// must not collide with map if walls affect monster
-	if(dat->walls && col[map[n.x + n.y * mapSize]]) return false;
+	if(dat->solid && col[map[n.x + n.y * mapSize]]) return false;
 	// if step collides with monster, attack
 	for(unsigned i = 0; i < mons.size(); ++i) {
 		if(mons[i].p == n) {

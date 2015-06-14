@@ -28,7 +28,8 @@ struct maze_node { // a node in the maze generation algorithm
 };
 
 void load_maze() {
-	int msize = 8; // size of map
+	int msize = 5; // size of map
+	int width = 2; // width of halls
 	maze_node** nodes; nodes = new maze_node*[msize]; // allocate nodes
 	for(int x = 0; x < msize; ++x) nodes[x] = new maze_node[msize];
 	vec2 n(rand() % msize, rand() % msize); // start at random position
@@ -66,17 +67,19 @@ void load_maze() {
 	}
 	// actually put the map
 	if(map != NULL) delete[] map;
-	mapSize = 17; currentMap = "maze";
+	mapSize = 16; currentMap = "maze";
 	map = new short[mapSize * mapSize]();
 	for(int i = 0; i < mapSize * mapSize; ++i) map[i] = 1; // fill map
-	for(int x = 0; x < msize; ++x) { // and carve out the corridors
+	for(int x = 0; x < msize; ++x) // carve corridors
 		for(int y = 0; y < msize; ++y) {
-			int mx = x * 2 + 1; int my = y * 2 + 1; // map coordinates
-			map[mx + my * mapSize] = 0;
-			map[mx + 1 + my * mapSize] = nodes[x][y].right ? 0 : 1;
-			map[mx + (my + 1) * mapSize] = nodes[x][y].down ? 0 : 1;
+			int mx = x * (1 + width) + 1; int my = y * (1 + width) + 1; // map coordinates
+			for(int cx = 0; cx < width; ++cx) {
+				map[mx + width + (my + cx) * mapSize] = nodes[x][y].right ? 0 : 1;
+				map[mx + cx + (my + width) * mapSize] = nodes[x][y].down ? 0 : 1;
+				for(int cy = 0; cy < width; ++ cy)
+					map[mx + cx + (my + cy) * mapSize] = 0;
+			}
 		}
-	}
 	map[mapSize - 2] = 2; // exit
 	// delete nodes
 	for(int x = 0; x < msize; ++x) delete[] nodes[x];

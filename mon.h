@@ -30,13 +30,13 @@ Mon* get_plyr(); // get pointer to player in mons
 struct mon_dat { // data structure of mon_data
 	std::string name; int tile;
 	int hp_base, mp_base; double spe_base;
-	bool walls; // stopped by walls
+	bool solid; // stopped by walls
 	mon_dat(std::string name, int tile,
 	        int hp_base, int mp_base, double spe_base,
-	        bool walls):
+	        bool solid):
 		name(name), tile(tile),
 		hp_base(hp_base), mp_base(mp_base), spe_base(spe_base),
-		walls(walls) {}
+		solid(solid) {}
 };
 
 struct Mon { // an individual monster
