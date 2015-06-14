@@ -95,7 +95,8 @@ int main(int argc, char **argv) {
 	loadMap("main");
 	
 	// create some monsters for testing
-	Mon(MON_GHOST, AI_MON, vec2(9, 9));
+	Mon(MON_BAT, AI_MON, vec2(8, 1));
+	Mon(MON_GHOST, AI_MON, vec2(8, 9));
 	Mon(MON_SLIME, AI_MON, vec2(8, 7));
 	Mon(MON_HUMAN, AI_PLYR, vec2(5, 5));
 	// create some items for testing, too
@@ -135,6 +136,7 @@ int main(int argc, char **argv) {
 					for(unsigned i = 0; i < items.size(); ++i)
 						if(items[i].p == plyr->p) {
 							plyr->inv.push_back(items[i]);
+							plyr->item = &plyr->inv.back();
 							swap(items[i], items.back());
 							items.pop_back();
 							break;

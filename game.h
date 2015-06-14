@@ -6,7 +6,7 @@
 #include"vec2.h"
 
 const int TILE_SIZE = 64; // size of tiles in pixels
-const int NUM_SPRITES = 5;
+const int NUM_SPRITES = 7;
 const int NUM_TILES = 6;
 extern ALLEGRO_BITMAP** sprites;
 extern ALLEGRO_BITMAP** tiles;

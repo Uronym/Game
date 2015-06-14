@@ -1,7 +1,6 @@
 
 #include<allegro5/allegro.h>
 #include<utility>
-#include<vector>
 #include"game.h"
 #include"mon.h"
 
@@ -11,6 +10,7 @@ double lerp(double a, double b, double c) {return a * (1 - c) + b * c;}
 
 mon_dat mon_data[MON_IDS] = {
 	//       name  tile hp  mp  spe   solid
+	mon_dat("bat",   6,  3, 10, 2.00, true),
 	mon_dat("ghost", 3,  5, 10, 0.75, false),
 	mon_dat("human", 4, 10, 10, 1.00, true),
 	mon_dat("slime", 0,  3, 10, 0.25, true),
@@ -26,6 +26,8 @@ Mon* get_plyr() {
 }
 
 void Mon::die() {
+	if(id == MON_BAT)
+		Item(ITEM_BAT, p);
 	for(unsigned i = 0; i < mons.size(); ++i)
 		if(this == &mons[i]) {mons.erase(mons.begin() + i); break;}
 }
@@ -69,7 +71,7 @@ bool Mon::step(MOVE_DIR dir) {
 	// if step collides with monster, attack
 	for(unsigned i = 0; i < mons.size(); ++i) {
 		if(mons[i].p == n) {
-			mons[i].dmg(item == NULL ? 1 : item->dat->dmg);
+			mons[i].dmg(item == NULL ? 1 : item->dat->atk);
 			o = p;
 			return true;
 		}

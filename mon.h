@@ -10,6 +10,7 @@ struct mon_dat;
 struct Mon;
 
 enum MON_ID { // indices for mon_data
+	MON_BAT,
 	MON_GHOST,
 	MON_HUMAN,
 	MON_SLIME,

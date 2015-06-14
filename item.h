@@ -9,6 +9,7 @@ struct item_dat;
 struct Item;
 
 enum ITEM_ID { // indices for item_data
+	ITEM_BAT,
 	ITEM_POTION,
 	ITEM_IDS, // number of ITEM_IDs
 };
@@ -18,9 +19,9 @@ extern std::vector<Item> items; // vector of all items
 
 struct item_dat { // data structure of item_data
 	std::string name; int tile;
-	int dmg;
-	item_dat(std::string name, int tile, int dmg):
-		name(name), tile(tile), dmg(dmg) {}
+	int atk;
+	item_dat(std::string name, int tile, int atk):
+		name(name), tile(tile), atk(atk) {}
 };
 
 struct Item { // an individual item
