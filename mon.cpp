@@ -10,9 +10,10 @@ double limit(double n, double mn, double mx) {return n < mn ? mn : n > mx ? mx :
 double lerp(double a, double b, double c) {return a * (1 - c) + b * c;}
 
 mon_dat mon_data[MON_IDS] = {
-	//       name  tile hp  mp  spe
-	mon_dat("human", 4, 10, 10, 1.00),
-	mon_dat("slime", 0, 10, 10, 0.25),
+	//       name  tile hp  mp  spe   walls
+	mon_dat("ghost", 3,  5, 10, 0.75, false),
+	mon_dat("human", 4, 10, 10, 1.00, true),
+	mon_dat("slime", 0,  3, 10, 0.25, true),
 };
 
 std::vector<Mon> mons;
@@ -49,7 +50,6 @@ void Mon::use(Item& it) {
 // mon attempts to take a step in dir
 // returns success
 bool Mon::step(MOVE_DIR dir) {
-	// step must not collide
 	vec2 n(p); // new position
 	switch(dir) {
 		case MOVE_UP:
@@ -63,9 +63,9 @@ bool Mon::step(MOVE_DIR dir) {
 		default:
 			return false;
 	}
-	if(!n.onsq(mapSize)) return false;
-	// step must not collide with map
-	if(col[map[n.x + n.y * mapSize]]) return false;
+	if(!n.onsq(mapSize)) return false; // must be on map
+	// must not collide with map if walls affect monster
+	if(dat->walls && col[map[n.x + n.y * mapSize]]) return false;
 	// if step collides with monster, attack
 	for(unsigned i = 0; i < mons.size(); ++i) {
 		if(mons[i].p == n) {

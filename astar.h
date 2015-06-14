@@ -3,6 +3,6 @@
 
 #include"vec2.h"
 
-bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g);
+bool pathfind(MOVE_DIR& dir, vec2 s, vec2 g, bool walls);
 
 #endif
