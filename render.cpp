@@ -49,6 +49,9 @@ void render() { // <-- exactly what it says
 		if(mons[i].item != NULL) // wielded item (if it exists)
 			al_draw_bitmap(sprites[mons[i].item->dat->tile], TILE_SIZE * 5, TILE_SIZE * 4, 0);
 	}
+	if(curs_mode) {
+		al_draw_bitmap(sprites[2], (5 + curs.x - px) * TILE_SIZE, (4 + curs.y - py) * TILE_SIZE, 0);
+	}
 	for(unsigned i = 0; i < mons[0].inv.size(); ++i) // render inventory
 		al_draw_bitmap(sprites[mons[0].inv[i].dat->tile], TILE_SIZE * i, TILE_SIZE * 8, 0);
 	al_flip_display(); // puts to screen

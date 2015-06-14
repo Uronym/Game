@@ -3,6 +3,7 @@
 
 #include<allegro5/allegro.h>
 #include<string>
+#include"vec2.h"
 
 const int TILE_SIZE = 64; // size of tiles in pixels
 const int NUM_SPRITES = 5;
@@ -17,5 +18,7 @@ extern double last_turn; // time of last turn
 
 void load_maze();
 void loadMap(std::string name);
+extern vec2 curs;
+extern bool curs_mode;
 
 #endif

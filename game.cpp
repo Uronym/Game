@@ -15,6 +15,9 @@ int mapSize = 0;
 std::string currentMap;
 double last_turn = 0;
 
+vec2 curs(0, 0);
+bool curs_mode = false;
+
 bool col[NUM_TILES] = {false, true, false, false, true, true};
 
 struct maze_node { // a node in the maze generation algorithm

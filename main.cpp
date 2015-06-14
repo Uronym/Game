@@ -7,8 +7,8 @@
 #include<cstdlib>
 #include<cstdio>
 #include<string>
+#include<utility>
 #include<vector>
-#include"astar.h"
 #include"game.h"
 #include"item.h"
 #include"mon.h"
@@ -79,6 +79,7 @@ int main(int argc, char **argv) {
 
 	al_init_primitives_addon();
 	al_register_event_source(event_queue, al_get_display_event_source(display));
+	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_set_window_title(display, "Game");
 	// music
 	al_install_audio();
@@ -92,54 +93,89 @@ int main(int argc, char **argv) {
 	al_play_sample_instance(music_inst);
 	
 	loadMap("main");
-
+	
 	// create some monsters for testing
 	Mon(MON_HUMAN, AI_PLYR, vec2(5, 5));
 	Mon(MON_SLIME, AI_MON, vec2(8, 7));
 	// create some items for testing, too
 	Item(ITEM_POTION, vec2(5, 5));
 	Item(ITEM_POTION, vec2(4, 5));
-	
-	ALLEGRO_TIMEOUT timeout;
 
+	// render.cpp cannot initialize its colors
+	// until allegro has been initialized
 	init_colors();
 
 	while(true) { // main loop
-		// listen for events from allegro **BEFORE** rendering
-		// so we can display the results of any input on the same frame
-		ALLEGRO_EVENT allegroEvent; //event is a c++ keyword, don't use it as a variable name
-		al_init_timeout(&timeout, 1.0/60.0);
-		bool is_event = al_wait_for_event_until(event_queue, &allegroEvent, &timeout);
-		if(is_event && allegroEvent.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {break;}
-		// keyboard input
+		// use keyboard state for cases where the state of the
+		// key is more important than the action of pressing it
+		// (for instance, movement or something)
 		al_get_keyboard_state(&keyboard_state);
-		// too lazy to push close button? Good news!
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_Q)) {break;}
-		// pick up items
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_G)) {
-			for(unsigned i = 0; i < items.size(); ++i) {
-				if(items[i].p == mons[0].p) {
-					mons[0].inv.push_back(items[i]);
-					items.erase(items.begin() + i);
-				}
+		// check events **BEFORE** rendering
+		// so results are rendered immediately
+		// event is not a C++ keyword; get a better editor
+		ALLEGRO_EVENT event;
+		bool is_event = al_wait_for_event_timed(event_queue, &event, 1 / 60);
+		if(is_event) {
+			switch(event.type) {
+			case ALLEGRO_EVENT_DISPLAY_CLOSE:
+				goto END;
+				break;
+			case ALLEGRO_EVENT_KEY_CHAR:
+				switch(event.keyboard.keycode) {
+				case ALLEGRO_KEY_UP:
+					--curs.y; break;
+				case ALLEGRO_KEY_DOWN:
+					++curs.y; break;
+				case ALLEGRO_KEY_LEFT:
+					--curs.x; break;
+				case ALLEGRO_KEY_RIGHT:
+					++curs.x; break;
+				case ALLEGRO_KEY_G:
+					for(unsigned i = 0; i < items.size(); ++i)
+						if(items[i].p == mons[0].p) {
+							mons[0].inv.push_back(items[i]);
+							swap(items[i], items.back());
+							items.pop_back();
+						}
+					break;
+				case ALLEGRO_KEY_I:
+					mons[0].item = mons[0].item == NULL ?
+						&mons[0].inv[0] : NULL;
+					break;
+				case ALLEGRO_KEY_Q:
+					goto END; break;
+				case ALLEGRO_KEY_T:
+					if(curs_mode && mons[0].item != NULL)
+						for(unsigned i = 0; i < mons[0].inv.size(); ++i)
+							if(mons[0].item == &mons[0].inv[i]) {
+								swap(mons[0].inv[i], mons[0].inv.back());
+								mons[0].inv.pop_back();
+								mons[0].item = NULL;
+								for(unsigned i = 0; i < mons.size(); ++i)
+									if(mons[i].p == curs)
+										mons[i].dmg(1);
+								break;
+							}
+					curs_mode = !curs_mode;
+					curs = mons[0].p;
+					break;
+				case ALLEGRO_KEY_U:
+					mons[0].use(mons[0].inv[0]); break;
+				} break;
 			}
 		}
-		// use items
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_U))
-			mons[0].use(mons[0].inv[0]);
-		// wield/unwield items
-		if(al_key_down(&keyboard_state, ALLEGRO_KEY_I))
-			mons[0].item = mons[0].item == NULL ? &mons[0].inv[0] : NULL;
-		if(al_get_time() - last_turn > 0.25
-			&& (al_key_down(&keyboard_state, ALLEGRO_KEY_UP)
-			|| al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)
-			|| al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)
-			|| al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT))) {
-			turn_step(keyboard_state);
-			last_turn = al_get_time();
+		if(!curs_mode) {
+			if(al_get_time() - last_turn > 0.25
+				&& (al_key_down(&keyboard_state, ALLEGRO_KEY_UP)
+				|| al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)
+				|| al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)
+				|| al_key_down(&keyboard_state, ALLEGRO_KEY_RIGHT))) {
+				turn_step(keyboard_state);
+				last_turn = al_get_time();
+			}
 		}
 		render();
 	}
-	return 0;
+	END: return 0;
 }
 
