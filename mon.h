@@ -24,6 +24,8 @@ enum AI_TYPE { // types of ai
 extern mon_dat mon_data[MON_IDS]; // data about all monster types
 extern std::vector<Mon> mons; // vector of all monsters
 
+Mon* get_plyr(); // get pointer to player in mons
+
 struct mon_dat { // data structure of mon_data
 	std::string name; int tile;
 	int hp_base, mp_base; double spe_base;

@@ -35,7 +35,7 @@ void turn_step(ALLEGRO_KEYBOARD_STATE& keyboard_state) {
 			switch(mon->ai) {
 				case AI_MON: {
 					MOVE_DIR dir; // direction to move
-					bool success = pathfind(dir, mon->p, mons[0].p);
+					bool success = pathfind(dir, mon->p, get_plyr()->p);
 					if(success) mon->step(dir);
 					break;
 				} case AI_PLYR:

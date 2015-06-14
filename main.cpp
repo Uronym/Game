@@ -95,8 +95,8 @@ int main(int argc, char **argv) {
 	loadMap("main");
 	
 	// create some monsters for testing
-	Mon(MON_HUMAN, AI_PLYR, vec2(5, 5));
 	Mon(MON_SLIME, AI_MON, vec2(8, 7));
+	Mon(MON_HUMAN, AI_PLYR, vec2(5, 5));
 	// create some items for testing, too
 	Item(ITEM_POTION, vec2(5, 5));
 	Item(ITEM_POTION, vec2(4, 5));
@@ -116,10 +116,10 @@ int main(int argc, char **argv) {
 		ALLEGRO_EVENT event;
 		bool is_event = al_wait_for_event_timed(event_queue, &event, 1 / 60);
 		if(is_event) {
+			Mon* plyr = get_plyr();
 			switch(event.type) {
 			case ALLEGRO_EVENT_DISPLAY_CLOSE:
-				goto END;
-				break;
+				goto END; break;
 			case ALLEGRO_EVENT_KEY_CHAR:
 				switch(event.keyboard.keycode) {
 				case ALLEGRO_KEY_UP:
@@ -132,35 +132,35 @@ int main(int argc, char **argv) {
 					++curs.x; break;
 				case ALLEGRO_KEY_G:
 					for(unsigned i = 0; i < items.size(); ++i)
-						if(items[i].p == mons[0].p) {
-							mons[0].inv.push_back(items[i]);
+						if(items[i].p == plyr->p) {
+							plyr->inv.push_back(items[i]);
 							swap(items[i], items.back());
 							items.pop_back();
+							break;
 						}
 					break;
 				case ALLEGRO_KEY_I:
-					mons[0].item = mons[0].item == NULL ?
-						&mons[0].inv[0] : NULL;
+					plyr->item = plyr->item == NULL ? &plyr->inv[0] : NULL;
 					break;
 				case ALLEGRO_KEY_Q:
 					goto END; break;
 				case ALLEGRO_KEY_T:
-					if(curs_mode && mons[0].item != NULL)
-						for(unsigned i = 0; i < mons[0].inv.size(); ++i)
-							if(mons[0].item == &mons[0].inv[i]) {
-								swap(mons[0].inv[i], mons[0].inv.back());
-								mons[0].inv.pop_back();
-								mons[0].item = NULL;
+					if(curs_mode && plyr->item != NULL)
+						for(unsigned i = 0; i < plyr->inv.size(); ++i)
+							if(plyr->item == &plyr->inv[i]) {
+								swap(plyr->inv[i], plyr->inv.back());
+								plyr->inv.pop_back();
+								plyr->item = NULL;
 								for(unsigned i = 0; i < mons.size(); ++i)
 									if(mons[i].p == curs)
 										mons[i].dmg(1);
 								break;
 							}
 					curs_mode = !curs_mode;
-					curs = mons[0].p;
+					curs = plyr->p;
 					break;
 				case ALLEGRO_KEY_U:
-					mons[0].use(mons[0].inv[0]); break;
+					plyr->use(plyr->inv[0]); break;
 				} break;
 			}
 		}

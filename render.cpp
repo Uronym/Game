@@ -17,20 +17,20 @@ void init_colors() {
 }
 
 void render() { // <-- exactly what it says
+	Mon* plyr = get_plyr();
+	double px, py; plyr->rpos(px, py); // "camera" position
 	al_clear_to_color(al_map_rgb(0, 0, 0));
-	double px, py; mons[0].rpos(px, py); // "camera" position
-	for(int x = mons[0].p.x - 6; x < mons[0].p.x + 7; ++x) { // render map
-		for(int y = mons[0].p.y - 5; y < mons[0].p.y + 6; ++y) {
-			if(x < 0 || x >= mapSize || y < 0 || y >= mapSize) continue;
+	for(int x = plyr->p.x - 6; x < plyr->p.x + 7; ++x) // render map
+		for(int y = plyr->p.y - 5; y < plyr->p.y + 6; ++y) {
+			if(!vec2(x, y).onsq(mapSize)) continue;
 			double rx = TILE_SIZE * (5 + x - px);
 			double ry = TILE_SIZE * (4 + y - py);
 			al_draw_bitmap(tiles[map[x + y * mapSize]], rx, ry, 0);
 		}
-	}
 	for(unsigned i = 0; i < items.size(); ++i) { // render items
 		double rx = TILE_SIZE * (5 + items[i].p.x - px);
 		double ry = TILE_SIZE * (4 + items[i].p.y - py);
-		al_draw_bitmap(sprites[1], rx, ry, 0);
+		al_draw_bitmap(sprites[items[i].dat->tile], rx, ry, 0);
 	}
 	for(unsigned i = 0; i < mons.size(); ++i) { // render monsters
 		double ix; double iy;
@@ -49,11 +49,10 @@ void render() { // <-- exactly what it says
 		if(mons[i].item != NULL) // wielded item (if it exists)
 			al_draw_bitmap(sprites[mons[i].item->dat->tile], TILE_SIZE * 5, TILE_SIZE * 4, 0);
 	}
-	if(curs_mode) {
+	if(curs_mode)
 		al_draw_bitmap(sprites[2], (5 + curs.x - px) * TILE_SIZE, (4 + curs.y - py) * TILE_SIZE, 0);
-	}
-	for(unsigned i = 0; i < mons[0].inv.size(); ++i) // render inventory
-		al_draw_bitmap(sprites[mons[0].inv[i].dat->tile], TILE_SIZE * i, TILE_SIZE * 8, 0);
+	for(unsigned i = 0; i < plyr->inv.size(); ++i) // render inventory
+		al_draw_bitmap(sprites[plyr->inv[i].dat->tile], TILE_SIZE * i, TILE_SIZE * 8, 0);
 	al_flip_display(); // puts to screen
 }
 

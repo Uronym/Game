@@ -17,6 +17,13 @@ mon_dat mon_data[MON_IDS] = {
 
 std::vector<Mon> mons;
 
+Mon* get_plyr() {
+	for(unsigned i = 0; i < mons.size(); ++i)
+		if(mons[i].ai == AI_PLYR)
+			return &mons[i];
+	assert(false); // maybe not the most friendly way
+}
+
 void Mon::die() {
 	for(unsigned i = 0; i < mons.size(); ++i)
 		if(this == &mons[i]) {mons.erase(mons.begin() + i); break;}
@@ -28,21 +35,14 @@ void Mon::dmg(int dp) {
 }
 
 void Mon::use(Item& it) {
-	for(unsigned i = 0; i < inv.size(); ++i) {
-		if(&it == &inv[i]) {
-			std::swap(inv[i], inv.back());
-			inv.pop_back();
-			if(&it == item) item = NULL;
-			break;
-		}
-	}
+	std::swap(it, inv.back());
+	inv.pop_back();
+	if(item == &it) item = NULL;
 	switch(it.id) {
-		case ITEM_POTION:
-			dmg(-10);
-			break;
-		default:
-			assert(false);
-			break;
+	case ITEM_POTION:
+		dmg(-10); break;
+	default:
+		assert(false); break;
 	}
 }
 
@@ -78,7 +78,7 @@ bool Mon::step(MOVE_DIR dir) {
 	o = p;
 	p = n;
 	last_step = al_get_time();
-	if(map[p.x + p.y * mapSize] == 2) {
+	if(this == get_plyr() && map[p.x + p.y * mapSize] == 2) {
 		if(currentMap == "main") load_maze();
 		else loadMap("main");
 	}
