@@ -2,6 +2,7 @@
 #include<allegro5/allegro.h>
 #include<allegro5/allegro_audio.h>
 #include<allegro5/allegro_acodec.h>
+#include<allegro5/allegro_font.h>
 #include<allegro5/allegro_image.h>
 #include<allegro5/allegro_primitives.h>
 #include<cstdlib>
@@ -78,9 +79,12 @@ int main(int argc, char **argv) {
    }
 
 	al_init_primitives_addon();
+	al_init_font_addon();
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_set_window_title(display, "Game");
+	// font
+	ALLEGRO_FONT* font = al_load_font("font.tga", 0, 0);
 	// music
 	al_install_audio();
 	al_init_acodec_addon();
@@ -178,6 +182,8 @@ int main(int argc, char **argv) {
 			}
 		}
 		render();
+		al_draw_text(font, al_map_rgb(255, 0, 0), 100, 100, ALLEGRO_ALIGN_CENTER, "Hello, World!");
+		al_flip_display();
 	}
 	END: return 0;
 }
