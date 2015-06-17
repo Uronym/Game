@@ -14,7 +14,7 @@ short* map = nullptr;
 int mapSize = 0;
 std::string currentMap;
 double last_turn = 0;
-
+std::string msg = "";
 vec2 curs(0, 0);
 bool curs_mode = false;
 

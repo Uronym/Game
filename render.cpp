@@ -1,5 +1,6 @@
 
 #include<allegro5/allegro.h>
+#include<allegro5/allegro_font.h>
 #include<allegro5/allegro_image.h>
 #include<allegro5/allegro_primitives.h>
 #include"game.h"
@@ -7,13 +8,16 @@
 #include"mon.h"
 #include"render.h"
 
-ALLEGRO_COLOR COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_BLUE;
+ALLEGRO_COLOR COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_WHITE;
+ALLEGRO_FONT* font;
 
-void init_colors() {
+void init_render() {
 	COLOR_BLACK = al_map_rgb(0, 0, 0);
 	COLOR_RED   = al_map_rgb(255, 0, 0);
 	COLOR_GREEN = al_map_rgb(0, 255, 0);
 	COLOR_BLUE  = al_map_rgb(0, 0, 255);
+	COLOR_WHITE = al_map_rgb(255, 255, 255);
+	font = al_load_font("font.tga", 0, 0);
 }
 
 void render() { // <-- exactly what it says
@@ -53,6 +57,7 @@ void render() { // <-- exactly what it says
 		al_draw_bitmap(sprites[2], (5 + curs.x - px) * TILE_SIZE, (4 + curs.y - py) * TILE_SIZE, 0);
 	for(unsigned i = 0; i < plyr->inv.size(); ++i) // render inventory
 		al_draw_bitmap(sprites[plyr->inv[i].dat->tile], TILE_SIZE * i, TILE_SIZE * 8, 0);
+	al_draw_text(font, COLOR_WHITE, 5.5 * TILE_SIZE, 0, ALLEGRO_ALIGN_CENTER, msg.c_str());
 	al_flip_display(); // puts to screen
 }
 

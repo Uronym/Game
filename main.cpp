@@ -83,8 +83,6 @@ int main(int argc, char **argv) {
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_set_window_title(display, "Game");
-	// font
-	ALLEGRO_FONT* font = al_load_font("font.tga", 0, 0);
 	// music
 	al_install_audio();
 	al_init_acodec_addon();
@@ -107,9 +105,8 @@ int main(int argc, char **argv) {
 	Item(ITEM_POTION, vec2(5, 5));
 	Item(ITEM_POTION, vec2(4, 5));
 
-	// render.cpp cannot initialize its colors
-	// until allegro has been initialized
-	init_colors();
+	// render.cpp cannot initialize its variables until allegro is initialized
+	init_render();
 
 	while(true) { // main loop
 		// use keyboard state for cases where the state of the
@@ -167,12 +164,12 @@ int main(int argc, char **argv) {
 					curs = plyr->p;
 					break;
 				case ALLEGRO_KEY_U:
-					plyr->use(plyr->inv[0]); break;
+					plyr->use(*plyr->item); break;
 				} break;
 			}
 		}
 		if(!curs_mode) {
-			if(al_get_time() - last_turn > 0.25
+			if(al_get_time() - last_turn > TURN_LENGTH
 				&& (al_key_down(&keyboard_state, ALLEGRO_KEY_UP)
 				|| al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)
 				|| al_key_down(&keyboard_state, ALLEGRO_KEY_LEFT)
@@ -182,8 +179,6 @@ int main(int argc, char **argv) {
 			}
 		}
 		render();
-		al_draw_text(font, al_map_rgb(255, 0, 0), 100, 100, ALLEGRO_ALIGN_CENTER, "Hello, World!");
-		al_flip_display();
 	}
 	END: return 0;
 }

@@ -11,7 +11,7 @@ Yes, that's actually the name of the project, for now. A better name is a top pr
       I | Wield first item in inventory
       Q | Quit/exit program
       T | Throw wielded item
-      U | Use first item in inventory
+      U | Use wielded item
 
 ## Compile
 

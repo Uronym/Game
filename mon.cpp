@@ -37,12 +37,17 @@ void Mon::dmg(int dp) {
 	if(hp == 0) die();
 }
 
+// use wielded item
 void Mon::use(Item& it) {
 	std::swap(it, inv.back());
 	inv.pop_back();
 	if(item == &it) item = NULL;
 	switch(it.id) {
+	case ITEM_BAT:
+		msg = "You hit your head with the bat.";
+		dmg(it.dat->atk); break;
 	case ITEM_POTION:
+		msg = "You quaff the healing potion.";
 		dmg(-10); break;
 	default:
 		assert(false); break;
@@ -54,16 +59,16 @@ void Mon::use(Item& it) {
 bool Mon::step(MOVE_DIR dir) {
 	vec2 n(p); // new position
 	switch(dir) {
-		case MOVE_UP:
-			--n.y; break;
-		case MOVE_DOWN:
-			++n.y; break;
-		case MOVE_LEFT:
-			--n.x; break;
-		case MOVE_RIGHT:
-			++n.x; break;
-		default:
-			return false;
+	case MOVE_UP:
+		--n.y; break;
+	case MOVE_DOWN:
+		++n.y; break;
+	case MOVE_LEFT:
+		--n.x; break;
+	case MOVE_RIGHT:
+		++n.x; break;
+	default:
+		assert(false); break;
 	}
 	if(!n.onsq(mapSize)) return false; // must be on map
 	// must not collide with map if walls affect monster
@@ -89,7 +94,7 @@ bool Mon::step(MOVE_DIR dir) {
 
 // get rendering position
 void Mon::rpos(double& rx, double& ry) {
-	double c = limit((al_get_time() - last_step) * 4, 0, 1);
+	double c = limit((al_get_time() - last_step) / TURN_LENGTH, 0, 1);
 	rx = lerp(o.x, p.x, c);
 	ry = lerp(o.y, p.y, c);
 }
