@@ -15,7 +15,7 @@ struct vec2 {
 	// is point within a square of size s? (useful for map bounds checking)
 	bool onsq(int s) const {return x >= 0 && x < s && y >= 0 && y < s;}
 	double dist(const vec2& p) const {
-		return sqrt(pow(x - p.x, 2) + pow(y - p.y, 2));}
+		return sqrt(pow(x - p.x, 2.0) + pow(y - p.y, 2.0));}
 };
 
 enum MOVE_DIR { // movement directions
@@ -26,7 +26,7 @@ enum MOVE_DIR { // movement directions
 	MOVE_DIRS, // number of MOVE_DIRs
 };
 
-const vec2 MOVE_VEC[] { // vector version of each MOVE_DIR
+const vec2 MOVE_VEC[] = { // vector version of each MOVE_DIR
 	vec2(0, -1),
 	vec2(0, 1),
 	vec2(-1, 0),
