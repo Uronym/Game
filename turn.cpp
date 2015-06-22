@@ -29,13 +29,14 @@ void turn_step(ALLEGRO_KEYBOARD_STATE& keyboard_state) {
 				mon = &mons[i];
 		// reinitialize turn_order; a monster probably died
 		if(mon == NULL) {init_turn_order(turn_order); continue;}
-		if(mon->move_pts < 1) break;
+		Mon* plyr = get_plyr();
+		if(plyr == NULL || mon->move_pts < 1) break;
 		else {
 			mon->move_pts -= 1;
 			switch(mon->ai) {
 				case AI_MON: {
 					MOVE_DIR dir; // direction to move
-					bool success = pathfind(dir, mon->p, get_plyr()->p, mon->dat->solid);
+					bool success = pathfind(dir, mon->p, plyr->p, mon->dat->solid);
 					if(success) mon->step(dir);
 					break;
 				} case AI_PLYR:

@@ -22,7 +22,7 @@ Mon* get_plyr() {
 	for(unsigned i = 0; i < mons.size(); ++i)
 		if(mons[i].ai == AI_PLYR)
 			return &mons[i];
-	assert(false); // maybe not the most friendly way
+	return NULL;
 }
 
 void Mon::die() {
@@ -39,9 +39,10 @@ void Mon::dmg(int dp) {
 
 // use wielded item
 void Mon::use(Item& it) {
+	if(&it == NULL) return;
+	if(&it == item) item = NULL;
 	std::swap(it, inv.back());
 	inv.pop_back();
-	if(item == &it) item = NULL;
 	switch(it.id) {
 	case ITEM_BAT:
 		msg = "You hit your head with the bat.";

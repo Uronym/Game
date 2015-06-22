@@ -118,12 +118,13 @@ int main(int argc, char **argv) {
 		// event is not a C++ keyword; get a better editor
 		ALLEGRO_EVENT event;
 		bool is_event = al_wait_for_event_timed(event_queue, &event, 1 / 60);
+		Mon* plyr = get_plyr();
 		if(is_event) {
-			Mon* plyr = get_plyr();
 			switch(event.type) {
 			case ALLEGRO_EVENT_DISPLAY_CLOSE:
 				goto END; break;
 			case ALLEGRO_EVENT_KEY_CHAR:
+				if(plyr == NULL) break;
 				switch(event.keyboard.keycode) {
 				case ALLEGRO_KEY_UP:
 					--curs.y; break;
@@ -168,7 +169,7 @@ int main(int argc, char **argv) {
 				} break;
 			}
 		}
-		if(!curs_mode) {
+		if(plyr != NULL && !curs_mode) {
 			if(al_get_time() - last_turn > TURN_LENGTH
 				&& (al_key_down(&keyboard_state, ALLEGRO_KEY_UP)
 				|| al_key_down(&keyboard_state, ALLEGRO_KEY_DOWN)
