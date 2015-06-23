@@ -96,10 +96,7 @@ int main(int argc, char **argv) {
 	
 	loadMap("main");
 	
-	// create some monsters for testing
-	Mon(MON_BAT, AI_MON, vec2(8, 1));
-	Mon(MON_GHOST, AI_MON, vec2(8, 9));
-	Mon(MON_SLIME, AI_MON, vec2(8, 7));
+	// create the player
 	Mon(MON_HUMAN, AI_PLYR, vec2(5, 5));
 	// create some items for testing, too
 	Item(ITEM_POTION, vec2(5, 5));

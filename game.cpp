@@ -1,11 +1,13 @@
 
 #include<allegro5/allegro.h>
 #include<cmath>
+#include<cstdio>
 #include<cstdlib>
 #include<fstream>
 #include<string>
 #include<vector>
 #include"game.h"
+#include"mon.h"
 #include"vec2.h"
 
 ALLEGRO_BITMAP** sprites;
@@ -99,6 +101,14 @@ void loadMap(std::string name) {
 		in.read((char *)map,length);
 		currentMap = name;
 		in.close();
+	}
+	// load monsters for this map
+	FILE* mons_file = fopen(("Maps/" + name + ".mons").c_str(), "r");
+	if(mons_file != NULL) {
+		int id, x, y;
+		while(fscanf(mons_file, "%i,%i,%i", &id, &x, &y) == 3)
+			Mon((MON_ID)id, AI_MON, vec2(x, y));
+		fclose(mons_file);
 	}
 }
 
