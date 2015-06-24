@@ -1,4 +1,5 @@
 
+#include<algorithm>
 #include<allegro5/allegro.h>
 #include<cmath>
 #include<cstdio>
@@ -7,6 +8,7 @@
 #include<string>
 #include<vector>
 #include"game.h"
+#include"item.h"
 #include"mon.h"
 #include"vec2.h"
 
@@ -102,13 +104,24 @@ void loadMap(std::string name) {
 		currentMap = name;
 		in.close();
 	}
-	// load monsters for this map
+	items.clear(); // remove items
+	mons.erase(std::remove_if(mons.begin(), mons.end(), // remove monsters
+		[](const Mon& m)->bool {return m.ai == AI_MON;}), mons.end());
+	// load monsters
 	FILE* mons_file = fopen(("Maps/" + name + ".mons").c_str(), "r");
 	if(mons_file != NULL) {
 		int id, x, y;
 		while(fscanf(mons_file, "%i,%i,%i", &id, &x, &y) == 3)
 			Mon((MON_ID)id, AI_MON, vec2(x, y));
 		fclose(mons_file);
+	}
+	// load items
+	FILE* items_file = fopen(("Maps/" + name + ".items").c_str(), "r");
+	if(items_file != NULL) {
+		int id, x, y;
+		while(fscanf(items_file, "%i,%i,%i", &id, &x, &y) == 3)
+			Item((ITEM_ID)id, vec2(x, y));
+		fclose(items_file);
 	}
 }
 

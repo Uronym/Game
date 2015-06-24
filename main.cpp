@@ -96,14 +96,8 @@ int main(int argc, char **argv) {
 	
 	loadMap("main");
 	
-	// create the player
-	Mon(MON_HUMAN, AI_PLYR, vec2(5, 5));
-	// create some items for testing, too
-	Item(ITEM_POTION, vec2(5, 5));
-	Item(ITEM_POTION, vec2(4, 5));
-
-	// render.cpp cannot initialize its variables until allegro is initialized
-	init_render();
+	Mon(MON_HUMAN, AI_PLYR, vec2(5, 5)); // create the player
+	init_render(); // initialize render variables now
 
 	while(true) { // main loop
 		// use keyboard state for cases where the state of the
